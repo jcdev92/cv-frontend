@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuthStore } from '../store/authStore';
 import { LogOut, LayoutDashboard, UserCircle, Briefcase, GraduationCap, Code, Star, Menu, X } from 'lucide-react';
 
 const DashboardLayout = () => {
-  const { isAuthenticated, logout } = useAuth();
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const logout = useAuthStore((state) => state.logout);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   if (!isAuthenticated) {

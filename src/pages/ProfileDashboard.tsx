@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import api from '../api/axios';
-import { useAuth } from '../context/AuthContext';
+import { useAuthStore } from '../store/authStore';
 import { Save, Loader2 } from 'lucide-react';
 
 const ProfileDashboard = () => {
-  const { user } = useAuth();
+  const user = useAuthStore((state) => state.user);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });

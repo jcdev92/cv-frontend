@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../api/axios';
-import { useAuth } from '../context/AuthContext';
+import { useAuthStore } from '../store/authStore';
 import { Plus, Edit2, Trash2, Calendar, MapPin, Loader2, ArrowLeft, GraduationCap, Building2 } from 'lucide-react';
 
 interface Education {
@@ -15,7 +15,7 @@ interface Education {
 }
 
 const EducationDashboard = () => {
-  const { user } = useAuth();
+  const user = useAuthStore((state) => state.user);
   const [educations, setEducations] = useState<Education[]>([]);
   const [loading, setLoading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);

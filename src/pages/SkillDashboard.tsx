@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../api/axios';
-import { useAuth } from '../context/AuthContext';
+import { useAuthStore } from '../store/authStore';
 import { Plus, Edit2, Trash2, Loader2, ArrowLeft, Star } from 'lucide-react';
 
 interface Skill {
@@ -11,7 +11,7 @@ interface Skill {
 }
 
 const SkillDashboard = () => {
-  const { user } = useAuth();
+  const user = useAuthStore((state) => state.user);
   const [skills, setSkills] = useState<Skill[]>([]);
   const [loading, setLoading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);

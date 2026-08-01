@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../api/axios';
-import { useAuth } from '../context/AuthContext';
+import { useAuthStore } from '../store/authStore';
 import { Plus, Edit2, Trash2, Calendar, Building, MapPin, Loader2, ArrowLeft } from 'lucide-react';
 
 // Interfaz para el tipado de la experiencia
@@ -18,7 +18,7 @@ interface Experience {
 }
 
 const ExperienceDashboard = () => {
-  const { user } = useAuth();
+  const user = useAuthStore((state) => state.user);
   const [experiences, setExperiences] = useState<Experience[]>([]);
   const [loading, setLoading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../api/axios';
-import { useAuth } from '../context/AuthContext';
+import { useAuthStore } from '../store/authStore';
 import { Plus, Edit2, Trash2, Calendar, Loader2, ArrowLeft, Code, ExternalLink, Github, ImageIcon } from 'lucide-react';
 
 interface Project {
@@ -17,7 +17,7 @@ interface Project {
 }
 
 const ProjectDashboard = () => {
-  const { user } = useAuth();
+  const user = useAuthStore((state) => state.user);
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);

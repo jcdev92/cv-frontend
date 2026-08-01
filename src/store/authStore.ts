@@ -1,0 +1,54 @@
+import { create } from 'zustand';
+import api from '../api/axios';
+
+interface User {
+  _id: string;
+  name: string;
+  email: string;
+}
+
+interface AuthState {
+  token: string | null;
+  user: User | null;
+  isAuthenticated: boolean;
+  loading: boolean;
+  login: (token: string) => void;
+  logout: () => void;
+  checkAuth: () => Promise<void>;
+}
+
+export const useAuthStore = create<AuthState>((set, get) => ({
+  token: localStorage.getItem('token'),
+  user: null,
+  isAuthenticated: !!localStorage.getItem('token'),
+  loading: true,
+
+  login: (token: string) => {
+    localStorage.setItem('token', token);
+    set({ token, isAuthenticated: true });
+    get().checkAuth(); // Cargar datos del usuario tras hacer login
+  },
+
+  logout: () => {
+    localStorage.removeItem('token');
+    set({ token: null, user: null, isAuthenticated: false, loading: false });
+  },
+
+  checkAuth: async () => {
+    const { token, logout } = get();
+    if (!token) {
+      set({ loading: false });
+      return;
+    }
+
+    try {
+      const response = await api.get('/auth/me');
+      set({ user: response.data, isAuthenticated: true });
+    } catch (error) {
+      console.error("Error validando token con Zustand", error);
+      logout();
+    } finally {
+      set({ loading: false });
+    }
+  }
+}));

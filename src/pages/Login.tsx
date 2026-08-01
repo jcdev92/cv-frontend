@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
-import { useAuth } from '../context/AuthContext';
+import { useAuthStore } from '../store/authStore';
 import { Briefcase } from 'lucide-react';
 
 const Login = () => {
   const [email, setEmail] = useState('admin@alexdev.com');
   const [password, setPassword] = useState('***REMOVED***');
   const [error, setError] = useState('');
-  const { login } = useAuth();
+  const login = useAuthStore((state) => state.login);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
