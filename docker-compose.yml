@@ -1,0 +1,12 @@
+services:
+  frontend:
+    build: .
+    container_name: cv-frontend-app
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app # Sincroniza tu código local con el contenedor en tiempo real
+      - /app/node_modules # Evita conflictos con los módulos internos del contenedor
+    environment:
+      - NODE_ENV=development
+    restart: unless-stopped
