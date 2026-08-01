@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
+import { Link, Navigate, Outlet } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
-import { LogOut, LayoutDashboard, UserCircle, Briefcase, GraduationCap, Code, Star, Menu, X } from 'lucide-react';
+import { LogOut, LayoutDashboard, UserCircle, Briefcase, GraduationCap, Code, Star, Menu, X, Eye } from 'lucide-react';
 
 const DashboardLayout = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -77,6 +77,17 @@ const DashboardLayout = () => {
             </a>
           ))}
         </nav>
+
+        <div className="px-4 pb-4">
+          <Link
+            to="/"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="flex items-center px-2 py-2.5 text-sm font-medium rounded-md text-blue-600 bg-blue-50 hover:bg-blue-100 transition-colors"
+          >
+            <Eye className="mr-3 h-5 w-5" />
+            Ver Portafolio
+          </Link>
+        </div>
 
         <div className="p-4 border-t border-gray-200">
           <button
