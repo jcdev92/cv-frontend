@@ -1,7 +1,20 @@
 import { Briefcase, MapPin, Building2, ChevronRight } from 'lucide-react';
 
+interface Experience {
+  _id: string;
+  jobTitle: string;
+  company: string;
+  location?: string;
+  startDate: string;
+  endDate?: string;
+  isCurrent: boolean;
+  description?: string;
+  highlights?: string[];
+  technologies?: string[];
+}
+
 interface ExperienceListProps {
-  experiences: any[];
+  experiences: Experience[];
 }
 
 const ExperienceList = ({ experiences }: ExperienceListProps) => {
@@ -20,7 +33,7 @@ const ExperienceList = ({ experiences }: ExperienceListProps) => {
             <div className="md:grid md:grid-cols-4 md:gap-8 items-start">
               <div className="hidden md:block col-span-1 text-gray-500 text-sm mt-1">
                 <div className="font-medium text-gray-900 mb-1">
-                  {new Date(exp.startDate).getFullYear()} — {exp.isCurrent ? 'Actualidad' : new Date(exp.endDate).getFullYear()}
+                  {new Date(exp.startDate).getFullYear()} — {exp.isCurrent ? 'Actualidad' : exp.endDate ? new Date(exp.endDate).getFullYear() : 'N/A'}
                 </div>
                 {exp.location && (
                   <div className="flex items-center"><MapPin className="w-3 h-3 mr-1" /> {exp.location}</div>
@@ -29,7 +42,7 @@ const ExperienceList = ({ experiences }: ExperienceListProps) => {
               
               <div className="col-span-3">
                 <div className="md:hidden text-sm font-medium text-blue-600 mb-2">
-                  {new Date(exp.startDate).getFullYear()} — {exp.isCurrent ? 'Actualidad' : new Date(exp.endDate).getFullYear()}
+                  {new Date(exp.startDate).getFullYear()} — {exp.isCurrent ? 'Actualidad' : exp.endDate ? new Date(exp.endDate).getFullYear() : 'N/A'}
                 </div>
                 <h4 className="text-xl font-bold text-gray-900">{exp.jobTitle}</h4>
                 <div className="text-lg text-gray-600 mb-4 flex items-center font-medium">

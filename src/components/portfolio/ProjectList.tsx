@@ -1,7 +1,17 @@
 import { Code2, Github, ExternalLink } from 'lucide-react';
 
+interface Project {
+  _id: string;
+  title: string;
+  description: string;
+  imageUrl?: string;
+  repoUrl?: string;
+  liveUrl?: string;
+  technologies?: string[];
+}
+
 interface ProjectListProps {
-  projects: any[];
+  projects: Project[];
 }
 
 const ProjectList = ({ projects }: ProjectListProps) => {

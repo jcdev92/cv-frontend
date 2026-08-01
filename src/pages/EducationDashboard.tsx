@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import api from '../api/axios';
 import { useAuthStore } from '../store/authStore';
 import { Plus, Edit2, Trash2, Calendar, MapPin, Loader2, ArrowLeft, GraduationCap, Building2 } from 'lucide-react';
@@ -32,9 +32,8 @@ const EducationDashboard = () => {
     description: ''
   });
 
-  const fetchEducations = async () => {
+  const fetchEducations = useCallback(async () => {
     if (!user?._id) return;
-    setLoading(true);
     try {
       const res = await api.get(`/educations?user=${user._id}`);
       setEducations(res.data);
@@ -43,10 +42,23 @@ const EducationDashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
-    fetchEducations();
+    if (!user?._id) return;
+    let ignore = false;
+    api
+      .get(`/educations?user=${user._id}`)
+      .then((res) => {
+        if (!ignore) setEducations(res.data);
+      })
+      .catch((error) => console.error("Error cargando educación:", error))
+      .finally(() => {
+        if (!ignore) setLoading(false);
+      });
+    return () => {
+      ignore = true;
+    };
   }, [user]);
 
   const openForm = (edu?: Education) => {
@@ -98,6 +110,7 @@ const EducationDashboard = () => {
       } else {
         await api.post('/educations', payload);
       }
+      setLoading(true);
       await fetchEducations();
       closeForm();
     } catch (error) {
@@ -112,6 +125,7 @@ const EducationDashboard = () => {
     if (!window.confirm('¿Estás seguro de que deseas eliminar este registro?')) return;
     try {
       await api.delete(`/educations/${id}`);
+      setLoading(true);
       await fetchEducations();
     } catch (error) {
       console.error("Error eliminando educación:", error);

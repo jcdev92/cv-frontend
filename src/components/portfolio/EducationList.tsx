@@ -1,7 +1,18 @@
 import { BookOpen, Calendar } from 'lucide-react';
 
+interface Education {
+  _id: string;
+  degree: string;
+  institution: string;
+  location?: string;
+  startDate: string;
+  endDate?: string;
+  isCurrent: boolean;
+  description?: string;
+}
+
 interface EducationListProps {
-  educations: any[];
+  educations: Education[];
 }
 
 const EducationList = ({ educations }: EducationListProps) => {
@@ -21,7 +32,7 @@ const EducationList = ({ educations }: EducationListProps) => {
             <div className="text-gray-600 font-medium mb-1">{edu.institution}</div>
             <div className="text-sm text-gray-500 mb-2 flex items-center">
               <Calendar className="w-3 h-3 mr-1" /> 
-              {new Date(edu.startDate).getFullYear()} - {edu.isCurrent ? 'Actualidad' : new Date(edu.endDate).getFullYear()}
+              {new Date(edu.startDate).getFullYear()} - {edu.isCurrent ? 'Actualidad' : edu.endDate ? new Date(edu.endDate).getFullYear() : 'N/A'}
             </div>
             {edu.description && <p className="text-sm text-gray-600">{edu.description}</p>}
           </div>

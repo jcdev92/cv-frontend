@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import api from '../api/axios';
 import { useAuthStore } from '../store/authStore';
-import { Plus, Edit2, Trash2, Calendar, Building, MapPin, Loader2, ArrowLeft } from 'lucide-react';
+import { Plus, Edit2, Trash2, Calendar, Building, Briefcase, MapPin, Loader2, ArrowLeft } from 'lucide-react';
 
 // Interfaz para el tipado de la experiencia
 interface Experience {
@@ -38,9 +38,8 @@ const ExperienceDashboard = () => {
     technologies: '' // Lo manejaremos como texto separado por comas
   });
 
-  const fetchExperiences = async () => {
+  const fetchExperiences = useCallback(async () => {
     if (!user?._id) return;
-    setLoading(true);
     try {
       const res = await api.get(`/experiences?user=${user._id}`);
       setExperiences(res.data);
@@ -49,10 +48,23 @@ const ExperienceDashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
-    fetchExperiences();
+    if (!user?._id) return;
+    let ignore = false;
+    api
+      .get(`/experiences?user=${user._id}`)
+      .then((res) => {
+        if (!ignore) setExperiences(res.data);
+      })
+      .catch((error) => console.error("Error cargando experiencias:", error))
+      .finally(() => {
+        if (!ignore) setLoading(false);
+      });
+    return () => {
+      ignore = true;
+    };
   }, [user]);
 
   const openForm = (exp?: Experience) => {
@@ -109,6 +121,7 @@ const ExperienceDashboard = () => {
       } else {
         await api.post('/experiences', payload);
       }
+      setLoading(true);
       await fetchExperiences();
       closeForm();
     } catch (error) {
@@ -123,6 +136,7 @@ const ExperienceDashboard = () => {
     if (!window.confirm('¿Estás seguro de que deseas eliminar esta experiencia?')) return;
     try {
       await api.delete(`/experiences/${id}`);
+      setLoading(true);
       await fetchExperiences();
     } catch (error) {
       console.error("Error eliminando experiencia:", error);

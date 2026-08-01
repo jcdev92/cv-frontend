@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import api from '../api/axios';
 import { useAuthStore } from '../store/authStore';
-import { Plus, Edit2, Trash2, Calendar, Loader2, ArrowLeft, Code, ExternalLink, Github, ImageIcon } from 'lucide-react';
+import { Plus, Edit2, Trash2, Loader2, ArrowLeft, Code, ExternalLink, Github, ImageIcon } from 'lucide-react';
 
 interface Project {
   _id?: string;
@@ -36,9 +36,8 @@ const ProjectDashboard = () => {
     technologies: ''
   });
 
-  const fetchProjects = async () => {
+  const fetchProjects = useCallback(async () => {
     if (!user?._id) return;
-    setLoading(true);
     try {
       const res = await api.get(`/projects?user=${user._id}`);
       setProjects(res.data);
@@ -47,10 +46,23 @@ const ProjectDashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
-    fetchProjects();
+    if (!user?._id) return;
+    let ignore = false;
+    api
+      .get(`/projects?user=${user._id}`)
+      .then((res) => {
+        if (!ignore) setProjects(res.data);
+      })
+      .catch((error) => console.error("Error cargando proyectos:", error))
+      .finally(() => {
+        if (!ignore) setLoading(false);
+      });
+    return () => {
+      ignore = true;
+    };
   }, [user]);
 
   const openForm = (proj?: Project) => {
@@ -102,6 +114,7 @@ const ProjectDashboard = () => {
       } else {
         await api.post('/projects', payload);
       }
+      setLoading(true);
       await fetchProjects();
       closeForm();
     } catch (error) {
@@ -116,6 +129,7 @@ const ProjectDashboard = () => {
     if (!window.confirm('¿Estás seguro de que deseas eliminar este proyecto?')) return;
     try {
       await api.delete(`/projects/${id}`);
+      setLoading(true);
       await fetchProjects();
     } catch (error) {
       console.error("Error eliminando proyecto:", error);

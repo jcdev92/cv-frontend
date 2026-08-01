@@ -59,7 +59,7 @@ const ProfileDashboard = () => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSaving(true);
     setMessage({ text: '', type: '' });
@@ -67,8 +67,9 @@ const ProfileDashboard = () => {
     try {
       await api.put('/profile', formData);
       setMessage({ text: 'Perfil guardado con éxito!', type: 'success' });
-    } catch (error) {
-      setMessage({ text: 'Error al guardar el perfil.', type: 'error' });
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+      setMessage({ text: `Error al guardar el perfil. ${errorMessage}`, type: 'error' });
     } finally {
       setSaving(false);
       setTimeout(() => setMessage({ text: '', type: '' }), 4000);

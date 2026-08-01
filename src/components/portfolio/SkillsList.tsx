@@ -1,7 +1,14 @@
 import { Star } from 'lucide-react';
 
+interface Skill {
+  _id: string;
+  name: string;
+  category: string;
+  proficiency?: number;
+}
+
 interface SkillsListProps {
-  skills: any[];
+  skills: Skill[];
 }
 
 const SkillsList = ({ skills }: SkillsListProps) => {
@@ -12,7 +19,7 @@ const SkillsList = ({ skills }: SkillsListProps) => {
     if (!acc[skill.category]) acc[skill.category] = [];
     acc[skill.category].push(skill);
     return acc;
-  }, {} as Record<string, any[]>);
+  }, {} as Record<string, Skill[]>);
 
   return (
     <section id="skills">

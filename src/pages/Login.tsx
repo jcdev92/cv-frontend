@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { isAxiosError } from 'axios';
 import api from '../api/axios';
 import { useAuthStore } from '../store/authStore';
 import { Briefcase } from 'lucide-react';
@@ -11,7 +12,7 @@ const Login = () => {
   const login = useAuthStore((state) => state.login);
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
     
@@ -19,8 +20,12 @@ const Login = () => {
       const response = await api.post('/auth/login', { email, password });
       login(response.data.token);
       navigate('/admin');
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Error al iniciar sesión');
+    } catch (err: unknown) {
+      if (isAxiosError<{ message?: string }>(err)) {
+        setError(err.response?.data?.message || 'Error al iniciar sesión');
+      } else {
+        setError('Error al iniciar sesión');
+      }
     }
   };
 

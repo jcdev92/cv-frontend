@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import api from '../api/axios';
 import { useAuthStore } from '../store/authStore';
 import { Plus, Edit2, Trash2, Loader2, ArrowLeft, Star } from 'lucide-react';
@@ -26,9 +26,8 @@ const SkillDashboard = () => {
 
   const categories = ['Frontend', 'Backend', 'Bases de Datos', 'DevOps / Herramientas', 'Lenguajes', 'Soft Skills', 'Otros'];
 
-  const fetchSkills = async () => {
+  const fetchSkills = useCallback(async () => {
     if (!user?._id) return;
-    setLoading(true);
     try {
       const res = await api.get(`/skills?user=${user._id}`);
       setSkills(res.data);
@@ -37,10 +36,23 @@ const SkillDashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
-    fetchSkills();
+    if (!user?._id) return;
+    let ignore = false;
+    api
+      .get(`/skills?user=${user._id}`)
+      .then((res) => {
+        if (!ignore) setSkills(res.data);
+      })
+      .catch((error) => console.error("Error cargando habilidades:", error))
+      .finally(() => {
+        if (!ignore) setLoading(false);
+      });
+    return () => {
+      ignore = true;
+    };
   }, [user]);
 
   const openForm = (skill?: Skill) => {
@@ -75,6 +87,7 @@ const SkillDashboard = () => {
       } else {
         await api.post('/skills', formData);
       }
+      setLoading(true);
       await fetchSkills();
       closeForm();
     } catch (error) {
@@ -89,6 +102,7 @@ const SkillDashboard = () => {
     if (!window.confirm('¿Eliminar habilidad?')) return;
     try {
       await api.delete(`/skills/${id}`);
+      setLoading(true);
       await fetchSkills();
     } catch (error) {
       console.error("Error eliminando habilidad:", error);

@@ -10,13 +10,72 @@ import ProjectList from '../components/portfolio/ProjectList';
 import SkillsList from '../components/portfolio/SkillsList';
 import EducationList from '../components/portfolio/EducationList';
 
+interface Profile {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  title: string;
+  summary: string;
+  email?: string;
+  location?: string;
+  avatarUrl?: string;
+  resumeUrl?: string;
+  socialLinks?: {
+    github?: string;
+    linkedin?: string;
+    twitter?: string;
+    website?: string;
+  };
+}
+
+interface Experience {
+  _id: string;
+  jobTitle: string;
+  company: string;
+  location?: string;
+  startDate: string;
+  endDate?: string;
+  isCurrent: boolean;
+  description?: string;
+  highlights?: string[];
+  technologies?: string[];
+}
+
+interface Project {
+  _id: string;
+  title: string;
+  description: string;
+  imageUrl?: string;
+  repoUrl?: string;
+  liveUrl?: string;
+  technologies?: string[];
+}
+
+interface Skill {
+  _id: string;
+  name: string;
+  category: string;
+  proficiency?: number;
+}
+
+interface Education {
+  _id: string;
+  degree: string;
+  institution: string;
+  location?: string;
+  startDate: string;
+  endDate?: string;
+  isCurrent: boolean;
+  description?: string;
+}
+
 const PublicHome = () => {
   const [data, setData] = useState({
-    profile: null as any,
-    experiences: [] as any[],
-    projects: [] as any[],
-    skills: [] as any[],
-    educations: [] as any[]
+    profile: null as Profile | null,
+    experiences: [] as Experience[],
+    projects: [] as Project[],
+    skills: [] as Skill[],
+    educations: [] as Education[]
   });
   const [loading, setLoading] = useState(true);
 
