@@ -1,7 +1,11 @@
-import { useState, useEffect, useCallback } from 'react';
-import api from '../api/axios';
 import { useAuthStore } from '../store/authStore';
-import { Plus, Edit2, Trash2, Loader2, ArrowLeft, Code, ExternalLink, Github, ImageIcon } from 'lucide-react';
+import { Plus, Edit2, Trash2, Code, ExternalLink, Github, ImageIcon } from 'lucide-react';
+import { useCrudResource } from '../hooks/useCrudResource';
+import { useForm } from '../hooks/useForm';
+import {
+  Input, Textarea, Button, IconButton, Spinner, EmptyState,
+  SectionHeader, FormActions, BackButton,
+} from '../components/admin/ui';
 
 interface Project {
   _id?: string;
@@ -16,190 +20,96 @@ interface Project {
   highlights?: string[];
 }
 
+interface ProjectForm {
+  title: string;
+  description: string;
+  imageUrl: string;
+  repoUrl: string;
+  liveUrl: string;
+  startDate: string;
+  endDate: string;
+  highlights: string;
+  technologies: string;
+}
+
+const initialForm: ProjectForm = {
+  title: '',
+  description: '',
+  imageUrl: '',
+  repoUrl: '',
+  liveUrl: '',
+  startDate: '',
+  endDate: '',
+  highlights: '',
+  technologies: '',
+};
+
 const ProjectDashboard = () => {
   const user = useAuthStore((state) => state.user);
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
+  const { formData, setFormData, handleChange, reset } = useForm(initialForm);
+  const { items: projects, loading, saving, isFormOpen, editingId, openForm, closeForm, save, remove } =
+    useCrudResource<Project, ProjectForm>('/projects', user?._id, {
+      transformPayload: (fd) => ({
+        ...fd,
+        highlights: fd.highlights.split('\n').filter((h) => h.trim() !== ''),
+        technologies: fd.technologies.split(',').map((t) => t.trim()).filter((t) => t !== ''),
+        startDate: fd.startDate || null,
+        endDate: fd.endDate || null,
+      }),
+      deleteConfirmMessage: '¿Estás seguro de que deseas eliminar este proyecto?',
+    });
 
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    imageUrl: '',
-    repoUrl: '',
-    liveUrl: '',
-    startDate: '',
-    endDate: '',
-    highlights: '',
-    technologies: ''
-  });
-
-  const fetchProjects = useCallback(async () => {
-    if (!user?._id) return;
-    try {
-      const res = await api.get(`/projects?user=${user._id}`);
-      setProjects(res.data);
-    } catch (error) {
-      console.error("Error cargando proyectos:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [user]);
-
-  useEffect(() => {
-    if (!user?._id) return;
-    let ignore = false;
-    api
-      .get(`/projects?user=${user._id}`)
-      .then((res) => {
-        if (!ignore) setProjects(res.data);
-      })
-      .catch((error) => console.error("Error cargando proyectos:", error))
-      .finally(() => {
-        if (!ignore) setLoading(false);
-      });
-    return () => {
-      ignore = true;
-    };
-  }, [user]);
-
-  const openForm = (proj?: Project) => {
-    if (proj) {
-      setEditingId(proj._id || null);
-      setFormData({
-        title: proj.title,
-        description: proj.description,
-        imageUrl: proj.imageUrl || '',
-        repoUrl: proj.repoUrl || '',
-        liveUrl: proj.liveUrl || '',
-        startDate: proj.startDate ? proj.startDate.substring(0, 10) : '',
-        endDate: proj.endDate ? proj.endDate.substring(0, 10) : '',
-        highlights: proj.highlights ? proj.highlights.join('\n') : '',
-        technologies: proj.technologies ? proj.technologies.join(', ') : ''
-      });
-    } else {
-      setEditingId(null);
-      setFormData({
-        title: '', description: '', imageUrl: '', repoUrl: '', liveUrl: '',
-        startDate: '', endDate: '', highlights: '', technologies: ''
-      });
-    }
-    setIsFormOpen(true);
+  const handleNew = () => {
+    reset();
+    openForm();
   };
 
-  const closeForm = () => setIsFormOpen(false);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+  const handleEdit = (proj: Project) => {
+    setFormData({
+      title: proj.title,
+      description: proj.description,
+      imageUrl: proj.imageUrl || '',
+      repoUrl: proj.repoUrl || '',
+      liveUrl: proj.liveUrl || '',
+      startDate: proj.startDate ? proj.startDate.substring(0, 10) : '',
+      endDate: proj.endDate ? proj.endDate.substring(0, 10) : '',
+      highlights: proj.highlights ? proj.highlights.join('\n') : '',
+      technologies: proj.technologies ? proj.technologies.join(', ') : '',
+    });
+    openForm(proj);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setSaving(true);
-    
-    const payload = {
-      ...formData,
-      highlights: formData.highlights.split('\n').filter(h => h.trim() !== ''),
-      technologies: formData.technologies.split(',').map(t => t.trim()).filter(t => t !== ''),
-      startDate: formData.startDate || null,
-      endDate: formData.endDate || null,
-    };
-
-    try {
-      if (editingId) {
-        await api.put(`/projects/${editingId}`, payload);
-      } else {
-        await api.post('/projects', payload);
-      }
-      setLoading(true);
-      await fetchProjects();
-      closeForm();
-    } catch (error) {
-      console.error("Error guardando proyecto:", error);
-      alert("Hubo un error al guardar.");
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleDelete = async (id: string) => {
-    if (!window.confirm('¿Estás seguro de que deseas eliminar este proyecto?')) return;
-    try {
-      await api.delete(`/projects/${id}`);
-      setLoading(true);
-      await fetchProjects();
-    } catch (error) {
-      console.error("Error eliminando proyecto:", error);
-      alert("Hubo un error al eliminar.");
-    }
+    save(formData);
   };
 
   if (isFormOpen) {
     return (
       <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 max-w-4xl">
-        <button onClick={closeForm} className="flex items-center text-gray-500 hover:text-blue-600 mb-6 transition">
-          <ArrowLeft className="h-4 w-4 mr-2" /> Volver a la lista
-        </button>
-        
+        <BackButton onClick={closeForm} />
         <h3 className="text-xl font-bold text-gray-900 mb-6">{editingId ? 'Editar Proyecto' : 'Nuevo Proyecto'}</h3>
-        
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Título del Proyecto</label>
-              <input type="text" name="title" required value={formData.title} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+              <Input label="Título del Proyecto" name="title" required value={formData.title} onChange={handleChange} />
             </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Repositorio (URL de GitHub)</label>
-              <input type="url" name="repoUrl" value={formData.repoUrl} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="https://github.com/..." />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Sitio en Vivo (URL)</label>
-              <input type="url" name="liveUrl" value={formData.liveUrl} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="https://..." />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">URL de la Imagen / Captura</label>
-              <input type="url" name="imageUrl" value={formData.imageUrl} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="https://..." />
-            </div>
-            
+            <Input label="Repositorio (URL de GitHub)" type="url" name="repoUrl" value={formData.repoUrl} onChange={handleChange} placeholder="https://github.com/..." />
+            <Input label="Sitio en Vivo (URL)" type="url" name="liveUrl" value={formData.liveUrl} onChange={handleChange} placeholder="https://..." />
+            <Input label="URL de la Imagen / Captura" type="url" name="imageUrl" value={formData.imageUrl} onChange={handleChange} placeholder="https://..." />
             <div className="flex gap-4">
               <div className="flex-1">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Inicio (Opcional)</label>
-                <input type="date" name="startDate" value={formData.startDate} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+                <Input label="Inicio (Opcional)" type="date" name="startDate" value={formData.startDate} onChange={handleChange} />
               </div>
               <div className="flex-1">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Fin (Opcional)</label>
-                <input type="date" name="endDate" value={formData.endDate} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+                <Input label="Fin (Opcional)" type="date" name="endDate" value={formData.endDate} onChange={handleChange} />
               </div>
             </div>
           </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
-            <textarea name="description" required rows={3} value={formData.description} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="¿De qué trata este proyecto?" />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Características / Logros (Uno por línea)</label>
-            <textarea name="highlights" rows={3} value={formData.highlights} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="- Autenticación de usuarios&#10;- Integración con pasarela de pagos..." />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Tecnologías (Separadas por comas)</label>
-            <input type="text" name="technologies" value={formData.technologies} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="React, Node.js, MongoDB..." />
-          </div>
-
-          <div className="flex justify-end pt-4">
-            <button type="button" onClick={closeForm} className="mr-3 px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition">Cancelar</button>
-            <button type="submit" disabled={saving} className="flex items-center px-6 py-2.5 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 disabled:opacity-70 transition">
-              {saving && <Loader2 className="animate-spin mr-2 h-4 w-4" />} Guardar
-            </button>
-          </div>
+          <Textarea label="Descripción" name="description" required rows={3} value={formData.description} onChange={handleChange} placeholder="¿De qué trata este proyecto?" />
+          <Textarea label="Características / Logros (Uno por línea)" name="highlights" rows={3} value={formData.highlights} onChange={handleChange} placeholder="- Autenticación de usuarios&#10;- Integración con pasarela de pagos..." />
+          <Input label="Tecnologías (Separadas por comas)" name="technologies" value={formData.technologies} onChange={handleChange} placeholder="React, Node.js, MongoDB..." />
+          <FormActions onCancel={closeForm} saving={saving} />
         </form>
       </div>
     );
@@ -207,24 +117,20 @@ const ProjectDashboard = () => {
 
   return (
     <div className="space-y-6 max-w-4xl">
-      <div className="flex justify-between items-center">
-        <div>
-          <h3 className="text-xl font-bold text-gray-900">Proyectos / Portafolio</h3>
-          <p className="text-gray-500 text-sm">Gestiona los proyectos que se mostrarán en tu portafolio.</p>
-        </div>
-        <button onClick={() => openForm()} className="flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition shadow-sm">
-          <Plus className="h-4 w-4 mr-2" /> Añadir Proyecto
-        </button>
-      </div>
+      <SectionHeader
+        title="Proyectos / Portafolio"
+        subtitle="Gestiona los proyectos que se mostrarán en tu portafolio."
+        action={
+          <Button size="sm" onClick={handleNew}>
+            <Plus className="h-4 w-4 mr-2" /> Añadir Proyecto
+          </Button>
+        }
+      />
 
       {loading ? (
-        <div className="flex justify-center py-12"><Loader2 className="animate-spin text-blue-600 h-8 w-8" /></div>
+        <Spinner />
       ) : projects.length === 0 ? (
-        <div className="bg-white border-2 border-dashed border-gray-200 rounded-xl p-12 text-center">
-          <Code className="mx-auto h-12 w-12 text-gray-300 mb-3" />
-          <h3 className="text-lg font-medium text-gray-900">No hay proyectos</h3>
-          <p className="text-gray-500 mt-1">Añade proyectos para construir tu portafolio.</p>
-        </div>
+        <EmptyState icon={Code} title="No hay proyectos" description="Añade proyectos para construir tu portafolio." />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {projects.map((proj) => (
@@ -238,22 +144,22 @@ const ProjectDashboard = () => {
                   <ImageIcon className="h-10 w-10 opacity-50" />
                 </div>
               )}
-              
+
               <div className="p-5 flex-1 flex flex-col">
                 <div className="flex justify-between items-start mb-2">
                   <h4 className="text-lg font-bold text-gray-900 line-clamp-1">{proj.title}</h4>
                   <div className="flex space-x-1 ml-2">
-                    <button onClick={() => openForm(proj)} className="p-1 text-gray-400 hover:text-blue-600 rounded transition" title="Editar">
+                    <IconButton title="Editar" onClick={() => handleEdit(proj)} className="p-1 text-gray-400 hover:text-blue-600">
                       <Edit2 className="h-4 w-4" />
-                    </button>
-                    <button onClick={() => handleDelete(proj._id!)} className="p-1 text-gray-400 hover:text-red-600 rounded transition" title="Eliminar">
+                    </IconButton>
+                    <IconButton title="Eliminar" onClick={() => remove(proj._id!)} className="p-1 text-gray-400 hover:text-red-600">
                       <Trash2 className="h-4 w-4" />
-                    </button>
+                    </IconButton>
                   </div>
                 </div>
-                
+
                 <p className="text-gray-600 text-sm mb-4 line-clamp-3 flex-1">{proj.description}</p>
-                
+
                 {proj.technologies && proj.technologies.length > 0 && (
                   <div className="flex flex-wrap gap-1.5 mb-4">
                     {proj.technologies.slice(0, 4).map((tech, i) => (
@@ -264,7 +170,7 @@ const ProjectDashboard = () => {
                     {proj.technologies.length > 4 && <span className="text-xs text-gray-500">+{proj.technologies.length - 4}</span>}
                   </div>
                 )}
-                
+
                 <div className="pt-4 border-t border-gray-100 flex space-x-4">
                   {proj.repoUrl && (
                     <a href={proj.repoUrl} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm text-gray-600 hover:text-gray-900">

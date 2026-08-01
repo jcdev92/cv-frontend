@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import api from '../api/axios';
 import { useAuthStore } from '../store/authStore';
 import { Save, Loader2 } from 'lucide-react';
+import { Input, Textarea, Button } from '../components/admin/ui';
 
 const ProfileDashboard = () => {
   const user = useAuthStore((state) => state.user);
@@ -47,7 +48,7 @@ const ProfileDashboard = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    
+
     if (name.startsWith('social.')) {
       const socialKey = name.split('.')[1];
       setFormData(prev => ({
@@ -100,96 +101,55 @@ const ProfileDashboard = () => {
           <div className="space-y-4">
             <h4 className="text-sm font-semibold text-gray-900 uppercase tracking-wider border-b pb-2">Datos Personales</h4>
             <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
-                <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} required className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Apellidos</label>
-                <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} required className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
-              </div>
+              <Input label="Nombre" name="firstName" value={formData.firstName} onChange={handleChange} required />
+              <Input label="Apellidos" name="lastName" value={formData.lastName} onChange={handleChange} required />
             </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Título Profesional</label>
-              <input type="text" name="title" value={formData.title} onChange={handleChange} required className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="Ej: Full Stack Developer" />
-            </div>
+
+            <Input label="Título Profesional" name="title" value={formData.title} onChange={handleChange} required placeholder="Ej: Full Stack Developer" />
 
             <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email Público</label>
-                <input type="email" name="email" value={formData.email} onChange={handleChange} required className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
-                <input type="text" name="phone" value={formData.phone} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
-              </div>
+              <Input label="Email Público" type="email" name="email" value={formData.email} onChange={handleChange} required />
+              <Input label="Teléfono" type="text" name="phone" value={formData.phone} onChange={handleChange} />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Ubicación</label>
-              <input type="text" name="location" value={formData.location} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="Ej: Madrid, España" />
-            </div>
+            <Input label="Ubicación" name="location" value={formData.location} onChange={handleChange} placeholder="Ej: Madrid, España" />
           </div>
 
           {/* Enlaces y URLs */}
           <div className="space-y-4">
             <h4 className="text-sm font-semibold text-gray-900 uppercase tracking-wider border-b pb-2">Enlaces y URLs</h4>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">URL Foto de Perfil (Avatar)</label>
-              <input type="url" name="avatarUrl" value={formData.avatarUrl} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
-            </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">URL de tu CV (PDF)</label>
-              <input type="url" name="resumeUrl" value={formData.resumeUrl} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
-            </div>
+            <Input label="URL Foto de Perfil (Avatar)" type="url" name="avatarUrl" value={formData.avatarUrl} onChange={handleChange} />
+
+            <Input label="URL de tu CV (PDF)" type="url" name="resumeUrl" value={formData.resumeUrl} onChange={handleChange} />
 
             <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">LinkedIn URL</label>
-                <input type="url" name="social.linkedin" value={formData.socialLinks.linkedin} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">GitHub URL</label>
-                <input type="url" name="social.github" value={formData.socialLinks.github} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Twitter/X URL</label>
-                <input type="url" name="social.twitter" value={formData.socialLinks.twitter} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Sitio Web Personal</label>
-                <input type="url" name="social.website" value={formData.socialLinks.website} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
-              </div>
+              <Input label="LinkedIn URL" type="url" name="social.linkedin" value={formData.socialLinks.linkedin} onChange={handleChange} />
+              <Input label="GitHub URL" type="url" name="social.github" value={formData.socialLinks.github} onChange={handleChange} />
+              <Input label="Twitter/X URL" type="url" name="social.twitter" value={formData.socialLinks.twitter} onChange={handleChange} />
+              <Input label="Sitio Web Personal" type="url" name="social.website" value={formData.socialLinks.website} onChange={handleChange} />
             </div>
           </div>
         </div>
 
         {/* Resumen / Sobre mí */}
         <div className="pt-4 border-t border-gray-100">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Sobre Mí (Resumen Profesional)</label>
-          <textarea 
-            name="summary" 
-            value={formData.summary} 
-            onChange={handleChange} 
-            required 
-            rows={5} 
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+          <Textarea
+            label="Sobre Mí (Resumen Profesional)"
+            name="summary"
+            value={formData.summary}
+            onChange={handleChange}
+            required
+            rows={5}
             placeholder="Escribe un breve resumen de tu experiencia y objetivos..."
           />
         </div>
 
         <div className="flex justify-end pt-4">
-          <button
-            type="submit"
-            disabled={saving}
-            className="flex items-center px-6 py-2.5 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-70 transition-colors"
-          >
-            {saving ? <Loader2 className="animate-spin mr-2 h-5 w-5" /> : <Save className="mr-2 h-5 w-5" />}
+          <Button type="submit" loading={saving}>
+            {!saving && <Save className="mr-2 h-5 w-5" />}
             Guardar Cambios
-          </button>
+          </Button>
         </div>
       </form>
     </div>

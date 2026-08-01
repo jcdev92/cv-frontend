@@ -1,7 +1,11 @@
-import { useState, useEffect, useCallback } from 'react';
-import api from '../api/axios';
 import { useAuthStore } from '../store/authStore';
-import { Plus, Edit2, Trash2, Loader2, ArrowLeft, Star } from 'lucide-react';
+import { Plus, Edit2, Trash2, Star } from 'lucide-react';
+import { useCrudResource } from '../hooks/useCrudResource';
+import { useForm } from '../hooks/useForm';
+import {
+  Input, Select, Button, IconButton, Spinner, EmptyState,
+  SectionHeader, FormActions, BackButton,
+} from '../components/admin/ui';
 
 interface Skill {
   _id?: string;
@@ -10,107 +14,45 @@ interface Skill {
   proficiency?: number;
 }
 
+interface SkillForm {
+  name: string;
+  category: string;
+  proficiency: number;
+}
+
+const categories = ['Frontend', 'Backend', 'Bases de Datos', 'DevOps / Herramientas', 'Lenguajes', 'Soft Skills', 'Otros'];
+
 const SkillDashboard = () => {
   const user = useAuthStore((state) => state.user);
-  const [skills, setSkills] = useState<Skill[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
-
-  const [formData, setFormData] = useState({
+  const { formData, setFormData, handleChange, reset } = useForm<SkillForm>({
     name: '',
-    category: '',
-    proficiency: 50
+    category: categories[0],
+    proficiency: 50,
   });
+  const { items: skills, loading, saving, isFormOpen, editingId, openForm, closeForm, save, remove } =
+    useCrudResource<Skill, SkillForm>('/skills', user?._id, {
+      deleteConfirmMessage: '¿Eliminar habilidad?',
+    });
 
-  const categories = ['Frontend', 'Backend', 'Bases de Datos', 'DevOps / Herramientas', 'Lenguajes', 'Soft Skills', 'Otros'];
-
-  const fetchSkills = useCallback(async () => {
-    if (!user?._id) return;
-    try {
-      const res = await api.get(`/skills?user=${user._id}`);
-      setSkills(res.data);
-    } catch (error) {
-      console.error("Error cargando habilidades:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [user]);
-
-  useEffect(() => {
-    if (!user?._id) return;
-    let ignore = false;
-    api
-      .get(`/skills?user=${user._id}`)
-      .then((res) => {
-        if (!ignore) setSkills(res.data);
-      })
-      .catch((error) => console.error("Error cargando habilidades:", error))
-      .finally(() => {
-        if (!ignore) setLoading(false);
-      });
-    return () => {
-      ignore = true;
-    };
-  }, [user]);
-
-  const openForm = (skill?: Skill) => {
-    if (skill) {
-      setEditingId(skill._id || null);
-      setFormData({
-        name: skill.name,
-        category: skill.category,
-        proficiency: skill.proficiency || 50
-      });
-    } else {
-      setEditingId(null);
-      setFormData({ name: '', category: categories[0], proficiency: 50 });
-    }
-    setIsFormOpen(true);
+  const handleNew = () => {
+    reset();
+    openForm();
   };
 
-  const closeForm = () => setIsFormOpen(false);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: name === 'proficiency' ? Number(value) : value }));
+  const handleEdit = (skill: Skill) => {
+    setFormData({
+      name: skill.name,
+      category: skill.category,
+      proficiency: skill.proficiency || 50,
+    });
+    openForm(skill);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setSaving(true);
-    
-    try {
-      if (editingId) {
-        await api.put(`/skills/${editingId}`, formData);
-      } else {
-        await api.post('/skills', formData);
-      }
-      setLoading(true);
-      await fetchSkills();
-      closeForm();
-    } catch (error) {
-      console.error("Error guardando habilidad:", error);
-      alert("Hubo un error al guardar.");
-    } finally {
-      setSaving(false);
-    }
+    save(formData);
   };
 
-  const handleDelete = async (id: string) => {
-    if (!window.confirm('¿Eliminar habilidad?')) return;
-    try {
-      await api.delete(`/skills/${id}`);
-      setLoading(true);
-      await fetchSkills();
-    } catch (error) {
-      console.error("Error eliminando habilidad:", error);
-      alert("Hubo un error al eliminar.");
-    }
-  };
-
-  // Agrupar habilidades por categoría
   const groupedSkills = skills.reduce((acc, skill) => {
     if (!acc[skill.category]) acc[skill.category] = [];
     acc[skill.category].push(skill);
@@ -120,48 +62,30 @@ const SkillDashboard = () => {
   if (isFormOpen) {
     return (
       <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 max-w-2xl">
-        <button onClick={closeForm} className="flex items-center text-gray-500 hover:text-blue-600 mb-6 transition">
-          <ArrowLeft className="h-4 w-4 mr-2" /> Volver
-        </button>
-        
+        <BackButton onClick={closeForm} label="Volver" />
         <h3 className="text-xl font-bold text-gray-900 mb-6">{editingId ? 'Editar Habilidad' : 'Nueva Habilidad'}</h3>
-        
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Nombre de la Herramienta/Habilidad</label>
-            <input type="text" name="name" required value={formData.name} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="Ej: React, Figma, Liderazgo..." />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Categoría</label>
-            <select name="category" required value={formData.category} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-              <option value="" disabled>Selecciona una categoría</option>
-              {categories.map(cat => (
-                <option key={cat} value={cat}>{cat}</option>
-              ))}
-            </select>
-          </div>
-
+          <Input label="Nombre de la Herramienta/Habilidad" name="name" required value={formData.name} onChange={handleChange} placeholder="Ej: React, Figma, Liderazgo..." />
+          <Select label="Categoría" name="category" required value={formData.category} onChange={handleChange}>
+            <option value="" disabled>Selecciona una categoría</option>
+            {categories.map((cat) => (
+              <option key={cat} value={cat}>{cat}</option>
+            ))}
+          </Select>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Nivel de dominio ({formData.proficiency}%)
             </label>
-            <input 
-              type="range" 
-              name="proficiency" 
+            <input
+              type="range"
+              name="proficiency"
               min="0" max="100" step="5"
-              value={formData.proficiency} 
-              onChange={handleChange} 
-              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" 
+              value={formData.proficiency}
+              onChange={(e) => setFormData((prev) => ({ ...prev, proficiency: Number(e.target.value) }))}
+              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
             />
           </div>
-
-          <div className="flex justify-end pt-4">
-            <button type="button" onClick={closeForm} className="mr-3 px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition">Cancelar</button>
-            <button type="submit" disabled={saving} className="flex items-center px-6 py-2.5 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 disabled:opacity-70 transition">
-              {saving && <Loader2 className="animate-spin mr-2 h-4 w-4" />} Guardar
-            </button>
-          </div>
+          <FormActions onCancel={closeForm} saving={saving} />
         </form>
       </div>
     );
@@ -169,24 +93,20 @@ const SkillDashboard = () => {
 
   return (
     <div className="space-y-6 max-w-4xl">
-      <div className="flex justify-between items-center">
-        <div>
-          <h3 className="text-xl font-bold text-gray-900">Habilidades (Skills)</h3>
-          <p className="text-gray-500 text-sm">Organiza tus herramientas y nivel de experiencia.</p>
-        </div>
-        <button onClick={() => openForm()} className="flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition shadow-sm">
-          <Plus className="h-4 w-4 mr-2" /> Añadir Habilidad
-        </button>
-      </div>
+      <SectionHeader
+        title="Habilidades (Skills)"
+        subtitle="Organiza tus herramientas y nivel de experiencia."
+        action={
+          <Button size="sm" onClick={handleNew}>
+            <Plus className="h-4 w-4 mr-2" /> Añadir Habilidad
+          </Button>
+        }
+      />
 
       {loading ? (
-        <div className="flex justify-center py-12"><Loader2 className="animate-spin text-blue-600 h-8 w-8" /></div>
+        <Spinner />
       ) : skills.length === 0 ? (
-        <div className="bg-white border-2 border-dashed border-gray-200 rounded-xl p-12 text-center">
-          <Star className="mx-auto h-12 w-12 text-gray-300 mb-3" />
-          <h3 className="text-lg font-medium text-gray-900">Sin habilidades</h3>
-          <p className="text-gray-500 mt-1">Añade los lenguajes o herramientas que dominas.</p>
-        </div>
+        <EmptyState icon={Star} title="Sin habilidades" description="Añade los lenguajes o herramientas que dominas." />
       ) : (
         <div className="space-y-8">
           {Object.entries(groupedSkills).map(([category, catSkills]) => (
@@ -198,8 +118,12 @@ const SkillDashboard = () => {
                     <div className="flex justify-between items-start mb-2">
                       <span className="font-medium text-gray-900">{skill.name}</span>
                       <div className="opacity-0 group-hover:opacity-100 transition-opacity flex space-x-1 absolute right-2 top-2 bg-white/80 rounded p-1">
-                        <button onClick={() => openForm(skill)} className="text-gray-400 hover:text-blue-600 transition p-1"><Edit2 className="h-3 w-3" /></button>
-                        <button onClick={() => handleDelete(skill._id!)} className="text-gray-400 hover:text-red-600 transition p-1"><Trash2 className="h-3 w-3" /></button>
+                        <IconButton onClick={() => handleEdit(skill)} className="p-1 text-gray-400 hover:text-blue-600">
+                          <Edit2 className="h-3 w-3" />
+                        </IconButton>
+                        <IconButton onClick={() => remove(skill._id!)} className="p-1 text-gray-400 hover:text-red-600">
+                          <Trash2 className="h-3 w-3" />
+                        </IconButton>
                       </div>
                     </div>
                     {skill.proficiency && (
