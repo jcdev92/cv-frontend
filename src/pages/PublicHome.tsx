@@ -10,6 +10,7 @@ import ExperienceList from '../components/portfolio/ExperienceList';
 import ProjectList from '../components/portfolio/ProjectList';
 import SkillsList from '../components/portfolio/SkillsList';
 import EducationList from '../components/portfolio/EducationList';
+import { ThemeToggle } from '../components/ThemeToggle';
 
 const PublicHome = () => {
   const [data, setData] = useState({
@@ -51,7 +52,7 @@ const PublicHome = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
         <Loader2 className="animate-spin text-blue-600 h-12 w-12" />
       </div>
     );
@@ -61,9 +62,9 @@ const PublicHome = () => {
 
   if (!profile) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4 text-center">
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">Perfil no encontrado</h1>
-        <p className="text-gray-600 mb-6">Parece que aún no hay datos en la base de datos.</p>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4 text-center dark:bg-gray-950">
+        <h1 className="text-3xl font-bold text-gray-900 mb-4 dark:text-gray-100">Perfil no encontrado</h1>
+        <p className="text-gray-600 mb-6 dark:text-gray-400">Parece que aún no hay datos en la base de datos.</p>
         <Link to="/admin" className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
           Ir al Panel de Administración
         </Link>
@@ -72,22 +73,25 @@ const PublicHome = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 font-sans text-gray-900 selection:bg-blue-200 selection:text-blue-900">
-      
+    <div className="min-h-screen bg-gray-50 font-sans text-gray-900 selection:bg-blue-200 selection:text-blue-900 dark:bg-gray-950 dark:text-gray-100">
+
       {/* Navegación Superior */}
-      <nav className="fixed w-full bg-white/80 backdrop-blur-md z-50 border-b border-gray-100 transition-all">
+      <nav className="fixed w-full bg-white/80 backdrop-blur-md z-50 border-b border-gray-100 transition-all dark:bg-gray-900/80 dark:border-gray-700">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <span className="text-xl font-bold bg-clip-text text-transparent bg-linear-to-r from-blue-600 to-indigo-600">
+          <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
             {profile.firstName} {profile.lastName}
           </span>
-          <div className="hidden md:flex space-x-8 text-sm font-medium text-gray-600">
-            <a href="#about" className="hover:text-blue-600 transition">Sobre mí</a>
-            {experiences.length > 0 && <a href="#experience" className="hover:text-blue-600 transition">Experiencia</a>}
-            {projects.length > 0 && <a href="#projects" className="hover:text-blue-600 transition">Proyectos</a>}
+          <div className="hidden md:flex space-x-8 text-sm font-medium text-gray-600 dark:text-gray-300">
+            <a href="#about" className="hover:text-blue-600 transition dark:hover:text-blue-400">Sobre mí</a>
+            {experiences.length > 0 && <a href="#experience" className="hover:text-blue-600 transition dark:hover:text-blue-400">Experiencia</a>}
+            {projects.length > 0 && <a href="#projects" className="hover:text-blue-600 transition dark:hover:text-blue-400">Proyectos</a>}
           </div>
-          <Link to="/admin" className="text-sm font-medium text-blue-600 hover:text-blue-800 transition">
-            Admin Login
-          </Link>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <Link to="/admin" className="text-sm font-medium text-blue-600 hover:text-blue-800 transition dark:hover:text-blue-400">
+              Admin Login
+            </Link>
+          </div>
         </div>
       </nav>
 
@@ -108,8 +112,8 @@ const PublicHome = () => {
       </main>
 
       {/* FOOTER */}
-      <footer className="bg-white border-t border-gray-200 py-8">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-gray-500">
+      <footer className="bg-white border-t border-gray-200 py-8 dark:bg-gray-900 dark:border-gray-700">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-gray-500 dark:text-gray-400">
           <p>© {new Date().getFullYear()} {profile.firstName} {profile.lastName}. Todos los derechos reservados.</p>
           <p className="mt-2 text-xs">Desarrollado con React, Node.js & MongoDB.</p>
         </div>

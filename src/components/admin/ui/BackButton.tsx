@@ -6,7 +6,7 @@ interface BackButtonProps {
 }
 
 export const BackButton = ({ onClick, label = 'Volver a la lista' }: BackButtonProps) => (
-  <button onClick={onClick} className="flex items-center text-gray-500 hover:text-blue-600 mb-6 transition">
+  <button onClick={onClick} className="flex items-center text-gray-500 hover:text-blue-600 mb-6 transition dark:text-gray-400 dark:hover:text-blue-400">
     <ArrowLeft className="h-4 w-4 mr-2" /> {label}
   </button>
 );

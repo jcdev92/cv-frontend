@@ -55,9 +55,9 @@ const SkillDashboard = () => {
 
   if (isFormOpen) {
     return (
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 max-w-2xl">
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 max-w-2xl dark:bg-gray-900 dark:border-gray-700">
         <BackButton onClick={closeForm} label="Volver" />
-        <h3 className="text-xl font-bold text-gray-900 mb-6">{editingId ? 'Editar Habilidad' : 'Nueva Habilidad'}</h3>
+        <h3 className="text-xl font-bold text-gray-900 mb-6 dark:text-gray-100">{editingId ? 'Editar Habilidad' : 'Nueva Habilidad'}</h3>
         <form onSubmit={handleSubmit} className="space-y-6">
           <Input label="Nombre de la Herramienta/Habilidad" name="name" required value={formData.name} onChange={handleChange} placeholder="Ej: React, Figma, Liderazgo..." />
           <Select label="Categoría" name="category" required value={formData.category} onChange={handleChange}>
@@ -67,7 +67,7 @@ const SkillDashboard = () => {
             ))}
           </Select>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
               Nivel de dominio ({formData.proficiency}%)
             </label>
             <input
@@ -104,14 +104,16 @@ const SkillDashboard = () => {
       ) : (
         <div className="space-y-8">
           {Object.entries(groupedSkills).map(([category, catSkills]) => (
-            <div key={category} className="bg-white border border-gray-100 p-5 rounded-xl shadow-sm">
-              <h4 className="text-md font-bold text-gray-900 mb-4 border-b border-gray-100 pb-2">{category}</h4>
+            <div key={category} className="bg-white border border-gray-100 p-5 rounded-xl shadow-sm dark:bg-gray-900 dark:border-gray-700">
+              <h4 className="text-md font-bold text-gray-900 mb-4 border-b border-gray-100 pb-2 dark:text-gray-100 dark:border-gray-700">
+                {category}
+              </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 {catSkills.map((skill) => (
-                  <div key={skill._id} className="group relative flex flex-col p-3 rounded-lg border border-gray-100 hover:border-blue-200 bg-gray-50 hover:bg-white transition">
+                  <div key={skill._id} className="group relative flex flex-col p-3 rounded-lg border border-gray-100 hover:border-blue-200 bg-gray-50 hover:bg-white transition dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-800/80 dark:hover:border-blue-500/40">
                     <div className="flex justify-between items-start mb-2">
-                      <span className="font-medium text-gray-900">{skill.name}</span>
-                      <div className="opacity-0 group-hover:opacity-100 transition-opacity flex space-x-1 absolute right-2 top-2 bg-white/80 rounded p-1">
+                      <span className="font-medium text-gray-900 dark:text-gray-100">{skill.name}</span>
+                      <div className="opacity-0 group-hover:opacity-100 transition-opacity flex space-x-1 absolute right-2 top-2 bg-white/80 rounded p-1 dark:bg-gray-900/80">
                         <IconButton onClick={() => handleEdit(skill)} className="p-1 text-gray-400 hover:text-blue-600">
                           <Edit2 className="h-3 w-3" />
                         </IconButton>

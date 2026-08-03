@@ -9,39 +9,39 @@ const ExperienceList = ({ experiences }: ExperienceListProps) => {
   if (!experiences || experiences.length === 0) return null;
 
   return (
-    <section id="experience" className="py-16 border-b border-gray-200">
+    <section id="experience" className="py-16 border-b border-gray-200 dark:border-gray-700">
       <div className="flex items-center mb-10">
         <Briefcase className="w-6 h-6 text-blue-600 mr-3" />
-        <h3 className="text-2xl font-bold text-gray-900">Experiencia Laboral</h3>
+        <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Experiencia Laboral</h3>
       </div>
-      
+
       <div className="space-y-12">
         {experiences.map((exp) => (
           <div key={exp._id} className="relative pl-8 md:pl-0">
             <div className="md:grid md:grid-cols-4 md:gap-8 items-start">
-              <div className="hidden md:block col-span-1 text-gray-500 text-sm mt-1">
-                <div className="font-medium text-gray-900 mb-1">
+              <div className="hidden md:block col-span-1 text-gray-500 text-sm mt-1 dark:text-gray-400">
+                <div className="font-medium text-gray-900 mb-1 dark:text-gray-100">
                   {new Date(exp.startDate).getFullYear()} — {exp.isCurrent ? 'Actualidad' : exp.endDate ? new Date(exp.endDate).getFullYear() : 'N/A'}
                 </div>
                 {exp.location && (
                   <div className="flex items-center"><MapPin className="w-3 h-3 mr-1" /> {exp.location}</div>
                 )}
               </div>
-              
+
               <div className="col-span-3">
-                <div className="md:hidden text-sm font-medium text-blue-600 mb-2">
+                <div className="md:hidden text-sm font-medium text-blue-600 mb-2 dark:text-blue-400">
                   {new Date(exp.startDate).getFullYear()} — {exp.isCurrent ? 'Actualidad' : exp.endDate ? new Date(exp.endDate).getFullYear() : 'N/A'}
                 </div>
-                <h4 className="text-xl font-bold text-gray-900">{exp.jobTitle}</h4>
-                <div className="text-lg text-gray-600 mb-4 flex items-center font-medium">
+                <h4 className="text-xl font-bold text-gray-900 dark:text-gray-100">{exp.jobTitle}</h4>
+                <div className="text-lg text-gray-600 mb-4 flex items-center font-medium dark:text-gray-400">
                   <Building2 className="w-4 h-4 mr-1.5" /> {exp.company}
                 </div>
-                <p className="text-gray-600 mb-4">{exp.description}</p>
-                
+                <p className="text-gray-600 mb-4 dark:text-gray-400">{exp.description}</p>
+
                 {exp.highlights && exp.highlights.length > 0 && (
                   <ul className="space-y-2 mb-4">
                     {exp.highlights.map((item: string, i: number) => (
-                      <li key={i} className="flex items-start text-gray-600">
+                      <li key={i} className="flex items-start text-gray-600 dark:text-gray-400">
                         <ChevronRight className="w-4 h-4 text-blue-500 mr-2 shrink-0 mt-0.5" />
                         <span>{item}</span>
                       </li>
@@ -52,7 +52,7 @@ const ExperienceList = ({ experiences }: ExperienceListProps) => {
                 {exp.technologies && exp.technologies.length > 0 && (
                   <div className="flex flex-wrap gap-2 mt-4">
                     {exp.technologies.map((tech: string, i: number) => (
-                      <span key={i} className="px-3 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full">
+                      <span key={i} className="px-3 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full dark:bg-gray-800 dark:text-gray-300">
                         {tech}
                       </span>
                     ))}

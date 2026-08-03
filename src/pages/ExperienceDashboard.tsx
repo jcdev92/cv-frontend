@@ -73,9 +73,9 @@ const ExperienceDashboard = () => {
 
   if (isFormOpen) {
     return (
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 max-w-4xl">
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 max-w-4xl dark:bg-gray-900 dark:border-gray-700">
         <BackButton onClick={closeForm} />
-        <h3 className="text-xl font-bold text-gray-900 mb-6">{editingId ? 'Editar Experiencia' : 'Nueva Experiencia'}</h3>
+        <h3 className="text-xl font-bold text-gray-900 mb-6 dark:text-gray-100">{editingId ? 'Editar Experiencia' : 'Nueva Experiencia'}</h3>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Input label="Cargo / Puesto" name="jobTitle" required value={formData.jobTitle} onChange={handleChange} />
@@ -115,15 +115,15 @@ const ExperienceDashboard = () => {
       ) : (
         <div className="space-y-4">
           {experiences.map((exp) => (
-            <div key={exp._id} className="bg-white border border-gray-100 p-5 rounded-xl shadow-sm hover:shadow-md transition">
+            <div key={exp._id} className="bg-white border border-gray-100 p-5 rounded-xl shadow-sm hover:shadow-md transition dark:bg-gray-900 dark:border-gray-700">
               <div className="flex justify-between items-start">
                 <div>
-                  <h4 className="text-lg font-bold text-gray-900">{exp.jobTitle}</h4>
-                  <div className="flex flex-wrap items-center text-sm text-gray-600 mt-1 gap-4">
-                    <span className="flex items-center"><Building className="h-4 w-4 mr-1 text-gray-400" /> {exp.company}</span>
-                    <span className="flex items-center"><MapPin className="h-4 w-4 mr-1 text-gray-400" /> {exp.location}</span>
+                  <h4 className="text-lg font-bold text-gray-900 dark:text-gray-100">{exp.jobTitle}</h4>
+                  <div className="flex flex-wrap items-center text-sm text-gray-600 mt-1 gap-4 dark:text-gray-400">
+                    <span className="flex items-center"><Building className="h-4 w-4 mr-1 text-gray-400 dark:text-gray-500" /> {exp.company}</span>
+                    <span className="flex items-center"><MapPin className="h-4 w-4 mr-1 text-gray-400 dark:text-gray-500" /> {exp.location}</span>
                     <span className="flex items-center">
-                      <Calendar className="h-4 w-4 mr-1 text-gray-400" />
+                      <Calendar className="h-4 w-4 mr-1 text-gray-400 dark:text-gray-500" />
                       {new Date(exp.startDate).toLocaleDateString()} - {exp.isCurrent ? 'Actualidad' : (exp.endDate ? new Date(exp.endDate).toLocaleDateString() : 'N/A')}
                     </span>
                   </div>
@@ -137,12 +137,12 @@ const ExperienceDashboard = () => {
                   </IconButton>
                 </div>
               </div>
-              <p className="text-gray-700 mt-4 text-sm">{exp.description}</p>
+              <p className="text-gray-700 mt-4 text-sm dark:text-gray-300">{exp.description}</p>
 
               {exp.technologies && exp.technologies.length > 0 && (
                 <div className="mt-4 flex flex-wrap gap-2">
                   {exp.technologies.map((tech, i) => (
-                    <span key={i} className="px-2.5 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full border border-gray-200">
+                    <span key={i} className="px-2.5 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full border border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600">
                       {tech}
                     </span>
                   ))}

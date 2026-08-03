@@ -65,9 +65,9 @@ const EducationDashboard = () => {
 
   if (isFormOpen) {
     return (
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 max-w-4xl">
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 max-w-4xl dark:bg-gray-900 dark:border-gray-700">
         <BackButton onClick={closeForm} />
-        <h3 className="text-xl font-bold text-gray-900 mb-6">{editingId ? 'Editar Educación' : 'Nueva Educación'}</h3>
+        <h3 className="text-xl font-bold text-gray-900 mb-6 dark:text-gray-100">{editingId ? 'Editar Educación' : 'Nueva Educación'}</h3>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Input label="Título / Grado" name="degree" required value={formData.degree} onChange={handleChange} placeholder="Ej: Ingeniería Informática" />
@@ -105,15 +105,15 @@ const EducationDashboard = () => {
       ) : (
         <div className="space-y-4">
           {items.map((edu) => (
-            <div key={edu._id} className="bg-white border border-gray-100 p-5 rounded-xl shadow-sm hover:shadow-md transition">
+            <div key={edu._id} className="bg-white border border-gray-100 p-5 rounded-xl shadow-sm hover:shadow-md transition dark:bg-gray-900 dark:border-gray-700">
               <div className="flex justify-between items-start">
                 <div>
-                  <h4 className="text-lg font-bold text-gray-900">{edu.degree}</h4>
-                  <div className="flex flex-wrap items-center text-sm text-gray-600 mt-1 gap-4">
-                    <span className="flex items-center"><Building2 className="h-4 w-4 mr-1 text-gray-400" /> {edu.institution}</span>
-                    {edu.location && <span className="flex items-center"><MapPin className="h-4 w-4 mr-1 text-gray-400" /> {edu.location}</span>}
+                  <h4 className="text-lg font-bold text-gray-900 dark:text-gray-100">{edu.degree}</h4>
+                  <div className="flex flex-wrap items-center text-sm text-gray-600 mt-1 gap-4 dark:text-gray-400">
+                    <span className="flex items-center"><Building2 className="h-4 w-4 mr-1 text-gray-400 dark:text-gray-500" /> {edu.institution}</span>
+                    {edu.location && <span className="flex items-center"><MapPin className="h-4 w-4 mr-1 text-gray-400 dark:text-gray-500" /> {edu.location}</span>}
                     <span className="flex items-center">
-                      <Calendar className="h-4 w-4 mr-1 text-gray-400" />
+                      <Calendar className="h-4 w-4 mr-1 text-gray-400 dark:text-gray-500" />
                       {new Date(edu.startDate).toLocaleDateString()} - {edu.isCurrent ? 'Actualidad' : (edu.endDate ? new Date(edu.endDate).toLocaleDateString() : 'N/A')}
                     </span>
                   </div>
@@ -127,7 +127,7 @@ const EducationDashboard = () => {
                   </IconButton>
                 </div>
               </div>
-              {edu.description && <p className="text-gray-700 mt-4 text-sm">{edu.description}</p>}
+              {edu.description && <p className="text-gray-700 mt-4 text-sm dark:text-gray-300">{edu.description}</p>}
             </div>
           ))}
         </div>
