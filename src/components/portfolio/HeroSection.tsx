@@ -1,20 +1,5 @@
 import { Github, Linkedin, Twitter, Globe, MapPin, Download, Mail } from 'lucide-react';
-
-interface Profile {
-  firstName: string;
-  title: string;
-  summary: string;
-  email?: string;
-  location?: string;
-  avatarUrl?: string;
-  resumeUrl?: string;
-  socialLinks?: {
-    github?: string;
-    linkedin?: string;
-    twitter?: string;
-    website?: string;
-  };
-}
+import type { Profile } from '../../types/cv';
 
 interface HeroSectionProps {
   profile: Profile;

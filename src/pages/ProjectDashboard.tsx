@@ -1,3 +1,4 @@
+import type { Project } from '../types/cv';
 import { useAuthStore } from '../store/authStore';
 import { Plus, Edit2, Trash2, Code, ExternalLink, Github, ImageIcon } from 'lucide-react';
 import { useCrudResource } from '../hooks/useCrudResource';
@@ -6,19 +7,6 @@ import {
   Input, Textarea, Button, IconButton, Spinner, EmptyState,
   SectionHeader, FormActions, BackButton,
 } from '../components/admin/ui';
-
-interface Project {
-  _id?: string;
-  title: string;
-  description: string;
-  imageUrl?: string;
-  repoUrl?: string;
-  liveUrl?: string;
-  technologies: string[];
-  startDate?: string;
-  endDate?: string;
-  highlights?: string[];
-}
 
 interface ProjectForm {
   title: string;
@@ -152,7 +140,7 @@ const ProjectDashboard = () => {
                     <IconButton title="Editar" onClick={() => handleEdit(proj)} className="p-1 text-gray-400 hover:text-blue-600">
                       <Edit2 className="h-4 w-4" />
                     </IconButton>
-                    <IconButton title="Eliminar" onClick={() => remove(proj._id!)} className="p-1 text-gray-400 hover:text-red-600">
+                    <IconButton title="Eliminar" onClick={() => remove(proj._id)} className="p-1 text-gray-400 hover:text-red-600">
                       <Trash2 className="h-4 w-4" />
                     </IconButton>
                   </div>

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api/axios';
 import { Loader2 } from 'lucide-react';
+import type { Profile, Education, Experience, Project, Skill } from '../types/cv';
 
 // Importación de componentes refactorizados
 import HeroSection from '../components/portfolio/HeroSection';
@@ -9,65 +10,6 @@ import ExperienceList from '../components/portfolio/ExperienceList';
 import ProjectList from '../components/portfolio/ProjectList';
 import SkillsList from '../components/portfolio/SkillsList';
 import EducationList from '../components/portfolio/EducationList';
-
-interface Profile {
-  _id: string;
-  firstName: string;
-  lastName: string;
-  title: string;
-  summary: string;
-  email?: string;
-  location?: string;
-  avatarUrl?: string;
-  resumeUrl?: string;
-  socialLinks?: {
-    github?: string;
-    linkedin?: string;
-    twitter?: string;
-    website?: string;
-  };
-}
-
-interface Experience {
-  _id: string;
-  jobTitle: string;
-  company: string;
-  location?: string;
-  startDate: string;
-  endDate?: string;
-  isCurrent: boolean;
-  description?: string;
-  highlights?: string[];
-  technologies?: string[];
-}
-
-interface Project {
-  _id: string;
-  title: string;
-  description: string;
-  imageUrl?: string;
-  repoUrl?: string;
-  liveUrl?: string;
-  technologies?: string[];
-}
-
-interface Skill {
-  _id: string;
-  name: string;
-  category: string;
-  proficiency?: number;
-}
-
-interface Education {
-  _id: string;
-  degree: string;
-  institution: string;
-  location?: string;
-  startDate: string;
-  endDate?: string;
-  isCurrent: boolean;
-  description?: string;
-}
 
 const PublicHome = () => {
   const [data, setData] = useState({

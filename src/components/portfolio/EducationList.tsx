@@ -1,15 +1,5 @@
 import { BookOpen, Calendar } from 'lucide-react';
-
-interface Education {
-  _id: string;
-  degree: string;
-  institution: string;
-  location?: string;
-  startDate: string;
-  endDate?: string;
-  isCurrent: boolean;
-  description?: string;
-}
+import type { Education } from '../../types/cv';
 
 interface EducationListProps {
   educations: Education[];

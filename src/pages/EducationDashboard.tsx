@@ -1,3 +1,4 @@
+import type { Education } from '../types/cv';
 import { useAuthStore } from '../store/authStore';
 import { Plus, Edit2, Trash2, Calendar, MapPin, GraduationCap, Building2 } from 'lucide-react';
 import { useCrudResource } from '../hooks/useCrudResource';
@@ -6,17 +7,6 @@ import {
   Input, Textarea, Checkbox, Button, IconButton, Spinner, EmptyState,
   SectionHeader, FormActions, BackButton,
 } from '../components/admin/ui';
-
-interface Education {
-  _id?: string;
-  degree: string;
-  institution: string;
-  location?: string;
-  startDate: string;
-  endDate?: string;
-  isCurrent: boolean;
-  description?: string;
-}
 
 interface EducationForm {
   degree: string;
@@ -132,7 +122,7 @@ const EducationDashboard = () => {
                   <IconButton title="Editar" onClick={() => handleEdit(edu)} className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50">
                     <Edit2 className="h-4 w-4" />
                   </IconButton>
-                  <IconButton title="Eliminar" onClick={() => remove(edu._id!)} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50">
+                  <IconButton title="Eliminar" onClick={() => remove(edu._id)} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50">
                     <Trash2 className="h-4 w-4" />
                   </IconButton>
                 </div>

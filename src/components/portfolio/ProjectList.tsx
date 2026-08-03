@@ -1,14 +1,5 @@
 import { Code2, Github, ExternalLink } from 'lucide-react';
-
-interface Project {
-  _id: string;
-  title: string;
-  description: string;
-  imageUrl?: string;
-  repoUrl?: string;
-  liveUrl?: string;
-  technologies?: string[];
-}
+import type { Project } from '../../types/cv';
 
 interface ProjectListProps {
   projects: Project[];

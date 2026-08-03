@@ -1,17 +1,5 @@
 import { Briefcase, MapPin, Building2, ChevronRight } from 'lucide-react';
-
-interface Experience {
-  _id: string;
-  jobTitle: string;
-  company: string;
-  location?: string;
-  startDate: string;
-  endDate?: string;
-  isCurrent: boolean;
-  description?: string;
-  highlights?: string[];
-  technologies?: string[];
-}
+import type { Experience } from '../../types/cv';
 
 interface ExperienceListProps {
   experiences: Experience[];

@@ -1,11 +1,5 @@
 import { Star } from 'lucide-react';
-
-interface Skill {
-  _id: string;
-  name: string;
-  category: string;
-  proficiency?: number;
-}
+import type { Skill } from '../../types/cv';
 
 interface SkillsListProps {
   skills: Skill[];

@@ -1,3 +1,4 @@
+import type { Skill } from '../types/cv';
 import { useAuthStore } from '../store/authStore';
 import { Plus, Edit2, Trash2, Star } from 'lucide-react';
 import { useCrudResource } from '../hooks/useCrudResource';
@@ -6,13 +7,6 @@ import {
   Input, Select, Button, IconButton, Spinner, EmptyState,
   SectionHeader, FormActions, BackButton,
 } from '../components/admin/ui';
-
-interface Skill {
-  _id?: string;
-  name: string;
-  category: string;
-  proficiency?: number;
-}
 
 interface SkillForm {
   name: string;
@@ -121,7 +115,7 @@ const SkillDashboard = () => {
                         <IconButton onClick={() => handleEdit(skill)} className="p-1 text-gray-400 hover:text-blue-600">
                           <Edit2 className="h-3 w-3" />
                         </IconButton>
-                        <IconButton onClick={() => remove(skill._id!)} className="p-1 text-gray-400 hover:text-red-600">
+                        <IconButton onClick={() => remove(skill._id)} className="p-1 text-gray-400 hover:text-red-600">
                           <Trash2 className="h-3 w-3" />
                         </IconButton>
                       </div>

@@ -1,3 +1,4 @@
+import type { Experience } from '../types/cv';
 import { useAuthStore } from '../store/authStore';
 import { Plus, Edit2, Trash2, Calendar, Building, Briefcase, MapPin } from 'lucide-react';
 import { useCrudResource } from '../hooks/useCrudResource';
@@ -6,19 +7,6 @@ import {
   Input, Textarea, Checkbox, Button, IconButton, Spinner, EmptyState,
   SectionHeader, FormActions, BackButton,
 } from '../components/admin/ui';
-
-interface Experience {
-  _id?: string;
-  jobTitle: string;
-  company: string;
-  location: string;
-  startDate: string;
-  endDate: string;
-  isCurrent: boolean;
-  description: string;
-  highlights: string[];
-  technologies: string[];
-}
 
 interface ExperienceForm {
   jobTitle: string;
@@ -144,7 +132,7 @@ const ExperienceDashboard = () => {
                   <IconButton title="Editar" onClick={() => handleEdit(exp)} className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50">
                     <Edit2 className="h-4 w-4" />
                   </IconButton>
-                  <IconButton title="Eliminar" onClick={() => remove(exp._id!)} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50">
+                  <IconButton title="Eliminar" onClick={() => remove(exp._id)} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50">
                     <Trash2 className="h-4 w-4" />
                   </IconButton>
                 </div>
