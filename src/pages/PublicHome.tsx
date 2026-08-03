@@ -135,7 +135,7 @@ const PublicHome = () => {
       {/* Navegación Superior */}
       <nav className="fixed w-full bg-white/80 backdrop-blur-md z-50 border-b border-gray-100 transition-all">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
+          <span className="text-xl font-bold bg-clip-text text-transparent bg-linear-to-r from-blue-600 to-indigo-600">
             {profile.firstName} {profile.lastName}
           </span>
           <div className="hidden md:flex space-x-8 text-sm font-medium text-gray-600">
