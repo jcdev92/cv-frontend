@@ -5,7 +5,7 @@ import { useCrudResource } from '../hooks/useCrudResource';
 import { useForm } from '../hooks/useForm';
 import {
   Input, Select, Button, IconButton, Spinner, EmptyState,
-  SectionHeader, FormActions, BackButton,
+  SectionHeader, FormActions, BackButton, ErrorBanner,
 } from '../components/admin/ui';
 
 interface SkillForm {
@@ -23,7 +23,7 @@ const SkillDashboard = () => {
     category: categories[0],
     proficiency: 50,
   });
-  const { items: skills, loading, saving, isFormOpen, editingId, openForm, closeForm, save, remove } =
+  const { items: skills, loading, saving, isFormOpen, editingId, error, openForm, closeForm, save, remove, clearError } =
     useCrudResource<Skill, SkillForm>('/skills', user?._id, {
       deleteConfirmMessage: '¿Eliminar habilidad?',
     });
@@ -58,6 +58,7 @@ const SkillDashboard = () => {
       <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 max-w-2xl dark:bg-gray-900 dark:border-gray-700">
         <BackButton onClick={closeForm} label="Volver" />
         <h3 className="text-xl font-bold text-gray-900 mb-6 dark:text-gray-100">{editingId ? 'Editar Habilidad' : 'Nueva Habilidad'}</h3>
+        {error && <ErrorBanner message={error} onDismiss={clearError} />}
         <form onSubmit={handleSubmit} className="space-y-6">
           <Input label="Nombre de la Herramienta/Habilidad" name="name" required value={formData.name} onChange={handleChange} placeholder="Ej: React, Figma, Liderazgo..." />
           <Select label="Categoría" name="category" required value={formData.category} onChange={handleChange}>
@@ -96,6 +97,8 @@ const SkillDashboard = () => {
           </Button>
         }
       />
+
+      {error && <ErrorBanner message={error} onDismiss={clearError} />}
 
       {loading ? (
         <Spinner />

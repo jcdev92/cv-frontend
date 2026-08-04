@@ -1,50 +1,99 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import api from '../api/axios';
 import { useAuthStore } from '../store/authStore';
 import { Save, Loader2 } from 'lucide-react';
-import { Input, Textarea, Button } from '../components/admin/ui';
+import type { Profile } from '../types/cv';
+import { Input, Textarea, Button, ErrorBanner } from '../components/admin/ui';
+
+interface ProfileForm {
+  firstName: string;
+  lastName: string;
+  title: string;
+  summary: string;
+  email: string;
+  phone: string;
+  location: string;
+  avatarUrl: string;
+  resumeUrl: string;
+  socialLinks: {
+    linkedin: string;
+    github: string;
+    twitter: string;
+    website: string;
+  };
+}
+
+const defaultForm: ProfileForm = {
+  firstName: '',
+  lastName: '',
+  title: '',
+  summary: '',
+  email: '',
+  phone: '',
+  location: '',
+  avatarUrl: '',
+  resumeUrl: '',
+  socialLinks: {
+    linkedin: '',
+    github: '',
+    twitter: '',
+    website: ''
+  }
+};
+
+const toForm = (profile: Profile | null | undefined): ProfileForm => ({
+  ...defaultForm,
+  ...profile,
+  socialLinks: { ...defaultForm.socialLinks, ...(profile?.socialLinks || {}) },
+});
 
 const ProfileDashboard = () => {
   const user = useAuthStore((state) => state.user);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState({ text: '', type: '' });
 
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    title: '',
-    summary: '',
-    email: '',
-    phone: '',
-    location: '',
-    avatarUrl: '',
-    resumeUrl: '',
-    socialLinks: {
-      linkedin: '',
-      github: '',
-      twitter: '',
-      website: ''
-    }
+  const { data: profile, isLoading, isError, refetch } = useQuery({
+    queryKey: ['profile', user?._id],
+    queryFn: async (): Promise<Profile | null> => {
+      const res = await api.get(`/profile?user=${user?._id}`);
+      return res.data ?? null;
+    },
+    enabled: !!user?._id,
   });
 
-  useEffect(() => {
-    if (user?._id) {
-      api.get(`/profile?user=${user._id}`)
-        .then((res) => {
-          if (res.data) {
-            // Mezclamos los datos por defecto con los que vengan de la API para evitar nulos
-            setFormData(prev => ({
-              ...prev,
-              ...res.data,
-              socialLinks: { ...prev.socialLinks, ...(res.data.socialLinks || {}) }
-            }));
-          }
-        })
-        .catch((err) => console.error("Error al cargar perfil:", err))
-        .finally(() => setLoading(false));
-    }
-  }, [user]);
+  if (isLoading) {
+    return <div className="flex justify-center py-20"><Loader2 className="animate-spin text-blue-600 h-8 w-8" /></div>;
+  }
+
+  return (
+    <ProfileForm key={profile?._id ?? 'new'} initial={toForm(profile)} isError={isError} onRetry={refetch} />
+  );
+};
+
+interface ProfileFormProps {
+  initial: ProfileForm;
+  isError: boolean;
+  onRetry: () => void;
+}
+
+const ProfileForm = ({ initial, isError, onRetry }: ProfileFormProps) => {
+  const user = useAuthStore((state) => state.user);
+  const queryClient = useQueryClient();
+  const [formData, setFormData] = useState<ProfileForm>(initial);
+  const [message, setMessage] = useState({ text: '', type: '' });
+
+  const saveMutation = useMutation({
+    mutationFn: (payload: ProfileForm) => api.put('/profile', payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['profile', user?._id] });
+      setMessage({ text: 'Perfil guardado con éxito!', type: 'success' });
+    },
+    onError: () => {
+      setMessage({ text: 'Error al guardar el perfil.', type: 'error' });
+    },
+  });
+
+  const saving = saveMutation.isPending;
+  const error = saveMutation.isError || isError ? 'Hubo un error al cargar o guardar el perfil.' : null;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -60,26 +109,12 @@ const ProfileDashboard = () => {
     }
   };
 
-  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSaving(true);
     setMessage({ text: '', type: '' });
-
-    try {
-      await api.put('/profile', formData);
-      setMessage({ text: 'Perfil guardado con éxito!', type: 'success' });
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
-      setMessage({ text: `Error al guardar el perfil. ${errorMessage}`, type: 'error' });
-    } finally {
-      setSaving(false);
-      setTimeout(() => setMessage({ text: '', type: '' }), 4000);
-    }
+    saveMutation.mutate(formData);
+    setTimeout(() => setMessage({ text: '', type: '' }), 4000);
   };
-
-  if (loading) {
-    return <div className="flex justify-center py-20"><Loader2 className="animate-spin text-blue-600 h-8 w-8" /></div>;
-  }
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 max-w-4xl dark:bg-gray-900 dark:border-gray-700">
@@ -94,6 +129,8 @@ const ProfileDashboard = () => {
           </span>
         )}
       </div>
+
+      {error && <ErrorBanner message={error} onDismiss={onRetry} />}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

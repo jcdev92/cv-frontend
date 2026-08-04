@@ -9,3 +9,4 @@ export { EmptyState } from './EmptyState';
 export { SectionHeader } from './SectionHeader';
 export { FormActions } from './FormActions';
 export { BackButton } from './BackButton';
+export { ErrorBanner } from './ErrorBanner';

@@ -5,7 +5,7 @@ import { useCrudResource } from '../hooks/useCrudResource';
 import { useForm } from '../hooks/useForm';
 import {
   Input, Textarea, Checkbox, Button, IconButton, Spinner, EmptyState,
-  SectionHeader, FormActions, BackButton,
+  SectionHeader, FormActions, BackButton, ErrorBanner,
 } from '../components/admin/ui';
 
 interface EducationForm {
@@ -31,7 +31,7 @@ const initialForm: EducationForm = {
 const EducationDashboard = () => {
   const user = useAuthStore((state) => state.user);
   const { formData, setFormData, handleChange, reset } = useForm(initialForm);
-  const { items, loading, saving, isFormOpen, editingId, openForm, closeForm, save, remove } =
+  const { items, loading, saving, isFormOpen, editingId, error, openForm, closeForm, save, remove, clearError } =
     useCrudResource<Education, EducationForm>('/educations', user?._id, {
       transformPayload: (fd) => ({
         ...fd,
@@ -68,6 +68,7 @@ const EducationDashboard = () => {
       <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 max-w-4xl dark:bg-gray-900 dark:border-gray-700">
         <BackButton onClick={closeForm} />
         <h3 className="text-xl font-bold text-gray-900 mb-6 dark:text-gray-100">{editingId ? 'Editar Educación' : 'Nueva Educación'}</h3>
+        {error && <ErrorBanner message={error} onDismiss={clearError} />}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Input label="Título / Grado" name="degree" required value={formData.degree} onChange={handleChange} placeholder="Ej: Ingeniería Informática" />
@@ -97,6 +98,8 @@ const EducationDashboard = () => {
           </Button>
         }
       />
+
+      {error && <ErrorBanner message={error} onDismiss={clearError} />}
 
       {loading ? (
         <Spinner />

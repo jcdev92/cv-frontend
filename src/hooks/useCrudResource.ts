@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
-import api from '../api/axios';
+import { useCallback, useMemo, useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { resourceApi } from '../api/resources';
 
 interface CrudOptions<TForm> {
   transformPayload?: (formData: TForm) => Record<string, unknown>;
@@ -20,84 +21,79 @@ export function useCrudResource<TItem extends { _id?: string }, TForm = unknown>
     deleteErrorMessage = 'Hubo un error al eliminar.',
   } = options;
 
-  const [items, setItems] = useState<TItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
+  const queryClient = useQueryClient();
+  const queryKey = useMemo(() => [basePath, userId], [basePath, userId]);
+
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!userId) return;
-    let ignore = false;
-    api
-      .get(`${basePath}?user=${userId}`)
-      .then((res) => {
-        if (!ignore) setItems(res.data);
-      })
-      .catch((error) => console.error(`Error cargando ${basePath}:`, error))
-      .finally(() => {
-        if (!ignore) setLoading(false);
-      });
-    return () => {
-      ignore = true;
-    };
-  }, [basePath, userId]);
+  const { data: items = [], isLoading: loading, isError, refetch } = useQuery({
+    queryKey,
+    queryFn: () => resourceApi.list<TItem>(basePath, userId),
+    enabled: !!userId,
+  });
 
-  const refresh = useCallback(async () => {
-    if (!userId) return;
-    setLoading(true);
-    try {
-      const res = await api.get(`${basePath}?user=${userId}`);
-      setItems(res.data);
-    } catch (error) {
-      console.error(`Error cargando ${basePath}:`, error);
-    } finally {
-      setLoading(false);
-    }
-  }, [basePath, userId]);
+  const invalidate = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey });
+  }, [queryClient, queryKey]);
+
+  const saveMutation = useMutation({
+    mutationFn: async (formData: TForm) => {
+      const payload = transformPayload ? transformPayload(formData) : (formData as Record<string, unknown>);
+      if (editingId) {
+        await resourceApi.update(basePath, editingId, payload);
+      } else {
+        await resourceApi.create(basePath, payload);
+      }
+    },
+    onSuccess: () => {
+      invalidate();
+      setError(null);
+      setIsFormOpen(false);
+    },
+    onError: () => setError(saveErrorMessage),
+  });
+
+  const removeMutation = useMutation({
+    mutationFn: (id: string) => resourceApi.remove(basePath, id),
+    onSuccess: () => invalidate(),
+    onError: () => setError(deleteErrorMessage),
+  });
 
   const openForm = useCallback((item?: TItem) => {
     setEditingId(item?._id ?? null);
+    setError(null);
     setIsFormOpen(true);
   }, []);
 
   const closeForm = useCallback(() => setIsFormOpen(false), []);
 
-  const save = useCallback(
-    async (formData: TForm) => {
-      setSaving(true);
-      try {
-        const payload = transformPayload ? transformPayload(formData) : formData;
-        if (editingId) {
-          await api.put(`${basePath}/${editingId}`, payload);
-        } else {
-          await api.post(basePath, payload);
-        }
-        await refresh();
-        closeForm();
-      } catch (error) {
-        console.error(`Error guardando ${basePath}:`, error);
-        alert(saveErrorMessage);
-      } finally {
-        setSaving(false);
-      }
-    },
-    [basePath, editingId, transformPayload, refresh, closeForm, saveErrorMessage]
-  );
+  const save = useCallback((formData: TForm) => saveMutation.mutate(formData), [saveMutation]);
 
   const remove = useCallback(
-    async (id: string) => {
+    (id: string) => {
       if (!window.confirm(deleteConfirmMessage)) return;
-      try {
-        await api.delete(`${basePath}/${id}`);
-        await refresh();
-      } catch (error) {
-        console.error(`Error eliminando ${basePath}:`, error);
-        alert(deleteErrorMessage);
-      }
+      removeMutation.mutate(id);
     },
-    [basePath, refresh, deleteConfirmMessage, deleteErrorMessage]
+    [removeMutation, deleteConfirmMessage]
   );
 
-  return { items, loading, saving, isFormOpen, editingId, openForm, closeForm, save, remove, refresh };
+  const clearError = useCallback(() => setError(null), []);
+
+  return {
+    items,
+    loading,
+    saving: saveMutation.isPending,
+    isFormOpen,
+    editingId,
+    error,
+    isError,
+    openForm,
+    closeForm,
+    save,
+    remove,
+    refresh: refetch,
+    clearError,
+  };
 }
