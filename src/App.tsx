@@ -9,6 +9,7 @@ import ExperienceDashboard from './pages/ExperienceDashboard';
 import EducationDashboard from './pages/EducationDashboard';
 import ProjectDashboard from './pages/ProjectDashboard';
 import SkillDashboard from './pages/SkillDashboard';
+import CVDashboard from './pages/CVDashboard';
 
 function App() {
   const checkAuth = useAuthStore((state) => state.checkAuth);
@@ -34,6 +35,7 @@ function App() {
           <Route path="education" element={<EducationDashboard />} />
           <Route path="projects" element={<ProjectDashboard />} />
           <Route path="skills" element={<SkillDashboard />} />
+          <Route path="cv" element={<CVDashboard />} />
         </Route>
       </Routes>
     </BrowserRouter>

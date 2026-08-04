@@ -1,0 +1,410 @@
+import { useQuery } from '@tanstack/react-query';
+import api from '../api/axios';
+import { useAuthStore } from '../store/authStore';
+import { Download, Printer, FileText } from 'lucide-react';
+import type { Profile, Education, Experience, Project, Skill } from '../types/cv';
+import { Button, Spinner, SectionHeader } from '../components/admin/ui';
+
+const CVDashboard = () => {
+  const user = useAuthStore((state) => state.user);
+
+  const { data: profile, isLoading: profileLoading } = useQuery({
+    queryKey: ['profile', user?._id],
+    queryFn: async (): Promise<Profile | null> => {
+      const res = await api.get(`/profile?user=${user?._id}`);
+      return res.data ?? null;
+    },
+    enabled: !!user?._id,
+  });
+
+  const { data: experiences = [] as Experience[], isLoading: expLoading } = useQuery({
+    queryKey: ['experiences', user?._id],
+    queryFn: async () => {
+      const res = await api.get(`/experiences?user=${user?._id}`);
+      return res.data as Experience[];
+    },
+    enabled: !!user?._id,
+  });
+
+  const { data: projects = [] as Project[], isLoading: projLoading } = useQuery({
+    queryKey: ['projects', user?._id],
+    queryFn: async () => {
+      const res = await api.get(`/projects?user=${user?._id}`);
+      return res.data as Project[];
+    },
+    enabled: !!user?._id,
+  });
+
+  const { data: skills = [] as Skill[], isLoading: skillLoading } = useQuery({
+    queryKey: ['skills', user?._id],
+    queryFn: async () => {
+      const res = await api.get(`/skills?user=${user?._id}`);
+      return res.data as Skill[];
+    },
+    enabled: !!user?._id,
+  });
+
+  const { data: educations = [] as Education[], isLoading: eduLoading } = useQuery({
+    queryKey: ['educations', user?._id],
+    queryFn: async () => {
+      const res = await api.get(`/educations?user=${user?._id}`);
+      return res.data as Education[];
+    },
+    enabled: !!user?._id,
+  });
+
+  const isLoading = profileLoading || expLoading || projLoading || skillLoading || eduLoading;
+
+  const formatDateRange = (startDate: string, endDate: string | undefined, isCurrent: boolean): string => {
+    const start = new Date(startDate).toLocaleDateString('es-ES', { year: 'numeric', month: 'short' });
+    if (isCurrent || !endDate) return `${start} — Presente`;
+    const end = new Date(endDate).toLocaleDateString('es-ES', { year: 'numeric', month: 'short' });
+    return `${start} — ${end}`;
+  };
+
+  const groupedSkills = skills.reduce((acc, skill) => {
+    if (!acc[skill.category]) acc[skill.category] = [];
+    acc[skill.category].push(skill.name);
+    return acc;
+  }, {} as Record<string, string[]>);
+
+  const handlePrint = () => {
+    window.print();
+  };
+
+  const handleDownloadPDF = () => {
+    if (!profile) return;
+
+    const sortedExperience = [...experiences].sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime());
+    const sortedEducation = [...educations].sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime());
+
+    const experienceSection = sortedExperience.map((exp) => `
+      <div class="cv-item">
+        <div class="flex justify-between">
+          <div>
+            <div class="cv-item-title">${exp.jobTitle}</div>
+            <div class="cv-item-sub">${exp.company}${exp.location ? ', ' + exp.location : ''}</div>
+          </div>
+          <div class="cv-dates">${formatDateRange(exp.startDate, exp.endDate, exp.isCurrent)}</div>
+        </div>
+        <p class="cv-item-meta mt-1">${exp.description}</p>
+        ${exp.highlights && exp.highlights.length > 0 ? `
+          <ul class="mt-1">
+            ${exp.highlights.map((h) => `<li>${h}</li>`).join('')}
+          </ul>
+        ` : ''}
+        ${exp.technologies && exp.technologies.length > 0 ? `<div class="cv-tech">Tecnologías: ${exp.technologies.join(', ')}</div>` : ''}
+      </div>
+    `).join('');
+
+    const educationSection = sortedEducation.map((edu) => `
+      <div class="cv-item">
+        <div class="flex justify-between">
+          <div>
+            <div class="cv-item-title">${edu.degree}</div>
+            <div class="cv-item-sub">${edu.institution}${edu.location ? ', ' + edu.location : ''}</div>
+          </div>
+          <div class="cv-dates">${formatDateRange(edu.startDate, edu.endDate, edu.isCurrent)}</div>
+        </div>
+        ${edu.description ? `<p class="cv-item-meta mt-1">${edu.description}</p>` : ''}
+      </div>
+    `).join('');
+
+    const skillsSection = Object.entries(groupedSkills).map(([category, skillNames]) => `
+      <div class="mb-2">
+        <div class="cv-item-title">${category}:</div>
+        <div class="cv-item-meta">${skillNames.join(', ')}</div>
+      </div>
+    `).join('');
+
+    const projectsSection = projects.slice(0, 6).map((proj) => `
+      <div class="cv-item">
+        <div class="flex justify-between">
+          <div class="cv-item-title">${proj.title}</div>
+          ${(proj.startDate || proj.endDate) ? `<div class="cv-dates">${proj.startDate ? new Date(proj.startDate).getFullYear() : ''}${proj.endDate && !proj.startDate ? ' — ' + new Date(proj.endDate).getFullYear() : ''}</div>` : ''}
+        </div>
+        <p class="cv-item-meta mt-1">${proj.description}</p>
+        ${proj.highlights && proj.highlights.length > 0 ? `
+          <ul class="mt-1">
+            ${proj.highlights.map((h) => `<li>${h}</li>`).join('')}
+          </ul>
+        ` : ''}
+        ${proj.technologies && proj.technologies.length > 0 ? `<div class="cv-tech">Tecnologías: ${proj.technologies.join(', ')}</div>` : ''}
+      </div>
+    `).join('');
+
+    const socialLinks = [];
+    if (profile.socialLinks?.github) socialLinks.push(`GitHub: ${profile.socialLinks.github}`);
+    if (profile.socialLinks?.linkedin) socialLinks.push(`LinkedIn: ${profile.socialLinks.linkedin}`);
+    if (profile.socialLinks?.website) socialLinks.push(`Web: ${profile.socialLinks.website}`);
+
+    const contactInfo = [profile.email, profile.location, ...socialLinks].filter(Boolean).join(' • ');
+
+    const printWindow = window.open('', '_blank', 'width=1000,height=1200');
+    if (!printWindow) return;
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html lang="es">
+      <head>
+        <title>Currículum Vitae - ${profile.firstName} ${profile.lastName}</title>
+        <style>
+          @page { margin: 1.5cm; size: A4; }
+          body { font-family: 'Calibri', 'Arial', sans-serif; margin: 0; padding: 0; color: #000; line-height: 1.4; font-size: 11pt; }
+          .cv-container { max-width: 800px; margin: 0 auto; padding: 1cm; }
+          .cv-header { text-align: center; margin-bottom: 1.5em; border-bottom: 2px solid #000; padding-bottom: 0.5em; }
+          .cv-header h1 { font-size: 22pt; font-weight: bold; margin: 0; letter-spacing: -0.5px; }
+          .cv-header h2 { font-size: 12pt; font-weight: normal; margin: 0.2em 0 0; color: #333; }
+          .cv-contact { font-size: 9pt; margin-top: 0.5em; color: #333; word-break: break-all; }
+          .cv-section { margin-bottom: 1.5em; page-break-inside: avoid; }
+          .cv-section h3 { font-size: 12pt; font-weight: bold; border-bottom: 1px solid #333; padding-bottom: 0.2em; margin-bottom: 0.6em; text-transform: uppercase; letter-spacing: 0.5px; }
+          .cv-item { margin-bottom: 0.8em; page-break-inside: avoid; }
+          .cv-item-title { font-weight: bold; font-size: 10pt; margin-bottom: 0.1em; }
+          .cv-item-sub { font-style: italic; font-size: 9pt; margin: 0.1em 0; color: #555; }
+          .cv-item-meta { font-size: 9pt; margin: 0.2em 0; color: #333; }
+          .cv-dates { font-size: 9pt; color: #333; font-weight: 500; }
+          .cv-tech { font-size: 9pt; color: #666; margin-top: 0.2em; }
+          ul { margin: 0.2em 0 0.2em 1.2em; padding: 0; }
+          li { margin-bottom: 0.2em; font-size: 9pt; }
+          .no-print { display: none; }
+          .footer { text-align: center; margin-top: 2em; padding-top: 0.5em; border-top: 1px solid #333; font-size: 8pt; color: #666; }
+        </style>
+      </head>
+      <body>
+        <div class="cv-container">
+          <div class="cv-header">
+            <h1>${profile.firstName} ${profile.lastName}</h1>
+            <h2>${profile.title}</h2>
+            ${contactInfo ? `<div class="cv-contact">${contactInfo}</div>` : ''}
+          </div>
+
+          ${profile.summary ? `
+            <div class="cv-section">
+              <h3>Perfil Profesional</h3>
+              <p class="cv-item-meta">${profile.summary}</p>
+            </div>
+          ` : ''}
+
+          ${experienceSection ? `<div class="cv-section"><h3>Experiencia Laboral</h3>${experienceSection}</div>` : ''}
+          ${educationSection ? `<div class="cv-section"><h3>Educación</h3>${educationSection}</div>` : ''}
+          ${skillsSection ? `<div class="cv-section"><h3>Habilidades</h3>${skillsSection}</div>` : ''}
+          ${projectsSection ? `<div class="cv-section"><h3>Proyectos</h3>${projectsSection}</div>` : ''}
+
+          <div class="footer">
+            Currículum generado el ${new Date().toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })}. Referencias disponibles a solicitud.
+          </div>
+        </div>
+      </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+    printWindow.close();
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center py-20">
+        <Spinner />
+      </div>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <div className="text-center py-20">
+        <FileText className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">No se encontró el perfil</h3>
+        <p className="text-gray-500 dark:text-gray-400">Asegúrate de completar tu perfil antes de generar el CV.</p>
+      </div>
+    );
+  }
+
+  const fullName = `${profile.firstName} ${profile.lastName}`;
+
+  return (
+    <div className="space-y-6">
+      <SectionHeader
+        title="Currículum Vitae (CV)"
+        subtitle="Genera y descarga tu CV en formato PDF siguiendo el estándar Harvard."
+      />
+
+      <div className="flex gap-3 mb-6 print:hidden">
+        <Button onClick={handleDownloadPDF} size="sm">
+          <Download className="h-4 w-4 mr-2" /> Descargar PDF
+        </Button>
+        <Button variant="secondary" onClick={handlePrint} size="sm">
+          <Printer className="h-4 w-4 mr-2" /> Imprimir
+        </Button>
+      </div>
+
+      <style>{`
+        @media print {
+          header, nav, .no-print { display: none !important; }
+        }
+      `}</style>
+
+      <div id="cv-content" className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm overflow-hidden">
+        {/* Header */}
+        <div className="text-center p-8 border-b-2 border-gray-200 dark:border-gray-700">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">{fullName}</h1>
+          <h2 className="text-lg font-medium text-gray-600 mt-1 dark:text-gray-400">{profile.title}</h2>
+          <div className="text-sm text-gray-500 dark:text-gray-400 mt-2 space-y-0.5">
+            {profile.email && <div>✉ {profile.email}</div>}
+            {profile.location && <div>📍 {profile.location}</div>}
+            {(profile.socialLinks?.github || profile.socialLinks?.linkedin || profile.socialLinks?.website) && (
+              <div className="flex justify-center gap-4 mt-1">
+                {profile.socialLinks?.github && <a href={profile.socialLinks.github} target="_blank" rel="noreferrer" className="text-blue-600 dark:text-blue-400">@github</a>}
+                {profile.socialLinks?.linkedin && <a href={profile.socialLinks.linkedin} target="_blank" rel="noreferrer" className="text-blue-600 dark:text-blue-400">@linkedin</a>}
+                {profile.socialLinks?.website && <a href={profile.socialLinks.website} target="_blank" rel="noreferrer" className="text-blue-600 dark:text-blue-400">@website</a>}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Professional Summary */}
+        {profile.summary && (
+          <div className="p-8 border-b border-gray-200 dark:border-gray-700">
+            <h3 className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Perfil Profesional</h3>
+            <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{profile.summary}</p>
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 p-8">
+          {/* Left Column: Skills */}
+          <div className="lg:col-span-1 space-y-6">
+            {skills.length > 0 && (
+              <div>
+                <h3 className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Habilidades</h3>
+                <div className="space-y-4">
+                  {Object.entries(groupedSkills).map(([category, skillNames]) => (
+                    <div key={category}>
+                      <h4 className="text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">{category}</h4>
+                      <ul className="list-disc list-inside text-sm text-gray-700 dark:text-gray-300 space-y-0.5">
+                        {skillNames.map((skillName, i) => (
+                          <li key={i}>{skillName}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Right Column: Experience, Education, Projects */}
+          <div className="lg:col-span-2 space-y-8">
+            {/* Experience */}
+            {experiences.length > 0 && (
+              <div>
+                <h3 className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">Experiencia Laboral</h3>
+                <div className="space-y-6">
+                  {experiences
+                    .slice()
+                    .sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
+                    .map((exp) => (
+                      <div key={exp._id}>
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h4 className="text-lg font-bold text-gray-900 dark:text-gray-100">{exp.jobTitle}</h4>
+                            <p className="text-gray-600 dark:text-gray-400 font-medium">{exp.company}</p>
+                            {exp.location && <p className="text-sm text-gray-500 dark:text-gray-400">{exp.location}</p>}
+                          </div>
+                          <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">
+                            {formatDateRange(exp.startDate, exp.endDate, exp.isCurrent)}
+                          </span>
+                        </div>
+                        <p className="text-gray-700 dark:text-gray-300 mt-2 text-sm">{exp.description}</p>
+                        {exp.highlights && exp.highlights.length > 0 && (
+                          <ul className="list-disc list-inside text-sm text-gray-700 dark:text-gray-300 mt-1 space-y-0.5">
+                            {exp.highlights.map((item, i) => (
+                              <li key={i}>{item}</li>
+                            ))}
+                          </ul>
+                        )}
+                        {exp.technologies && exp.technologies.length > 0 && (
+                          <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                            Tecnologías: {exp.technologies.join(', ')}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
+
+            {/* Education */}
+            {educations.length > 0 && (
+              <div>
+                <h3 className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">Educación</h3>
+                <div className="space-y-6">
+                  {educations
+                    .slice()
+                    .sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
+                    .map((edu) => (
+                      <div key={edu._id}>
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h4 className="text-lg font-bold text-gray-900 dark:text-gray-100">{edu.degree}</h4>
+                            <p className="text-gray-600 dark:text-gray-400 font-medium">{edu.institution}</p>
+                            {edu.location && <p className="text-sm text-gray-500 dark:text-gray-400">{edu.location}</p>}
+                          </div>
+                          <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">
+                            {formatDateRange(edu.startDate, edu.endDate, edu.isCurrent)}
+                          </span>
+                        </div>
+                        {edu.description && <p className="text-gray-700 dark:text-gray-300 mt-1 text-sm">{edu.description}</p>}
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
+
+            {/* Projects */}
+            {projects.length > 0 && (
+              <div>
+                <h3 className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">Proyectos</h3>
+                <div className="space-y-5">
+                  {projects.slice(0, 6).map((proj) => (
+                    <div key={proj._id}>
+                      <div className="flex justify-between items-start">
+                        <h4 className="text-lg font-bold text-gray-900 dark:text-gray-100">{proj.title}</h4>
+                        {(proj.startDate || proj.endDate) && (
+                          <span className="text-sm text-gray-500 dark:text-gray-400">
+                            {proj.startDate && new Date(proj.startDate).getFullYear()}
+                            {proj.endDate && !proj.startDate && ' — ' + new Date(proj.endDate).getFullYear()}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-gray-700 dark:text-gray-300 mt-1 text-sm">{proj.description}</p>
+                      {proj.highlights && proj.highlights.length > 0 && (
+                        <ul className="list-disc list-inside text-sm text-gray-700 dark:text-gray-300 mt-1 space-y-0.5">
+                          {proj.highlights.map((item, i) => (
+                            <li key={i}>{item}</li>
+                          ))}
+                        </ul>
+                      )}
+                      {proj.technologies && proj.technologies.length > 0 && (
+                        <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                          Tecnologías: {proj.technologies.join(', ')}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="p-8 border-t border-gray-200 dark:border-gray-700 text-center text-sm text-gray-500 dark:text-gray-400">
+          <p>Currículum generado en {new Date().toLocaleDateString('es-ES')}. Referencias disponibles a solicitud.</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default CVDashboard;
