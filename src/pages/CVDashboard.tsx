@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import api from '../api/axios';
 import { useAuthStore } from '../store/authStore';
-import { Download, Printer, FileText } from 'lucide-react';
+import { Download, FileText } from 'lucide-react';
 import type { Profile, Education, Experience, Project, Skill } from '../types/cv';
 import { Button, Spinner, SectionHeader } from '../components/admin/ui';
 
@@ -67,10 +67,6 @@ const CVDashboard = () => {
     acc[skill.category].push(skill.name);
     return acc;
   }, {} as Record<string, string[]>);
-
-  const handlePrint = () => {
-    window.print();
-  };
 
   const handleDownloadPDF = () => {
     if (!profile) return;
@@ -233,9 +229,6 @@ const CVDashboard = () => {
       <div className="flex gap-3 mb-6 print:hidden">
         <Button onClick={handleDownloadPDF} size="sm">
           <Download className="h-4 w-4 mr-2" /> Descargar PDF
-        </Button>
-        <Button variant="secondary" onClick={handlePrint} size="sm">
-          <Printer className="h-4 w-4 mr-2" /> Imprimir
         </Button>
       </div>
 
