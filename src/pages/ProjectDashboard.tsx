@@ -13,6 +13,8 @@ interface ProjectForm {
   description: string;
   imageUrl: string;
   repoUrl: string;
+  frontendRepoUrl: string;
+  backendRepoUrl: string;
   liveUrl: string;
   startDate: string;
   endDate: string;
@@ -25,6 +27,8 @@ const initialForm: ProjectForm = {
   description: '',
   imageUrl: '',
   repoUrl: '',
+  frontendRepoUrl: '',
+  backendRepoUrl: '',
   liveUrl: '',
   startDate: '',
   endDate: '',
@@ -58,6 +62,8 @@ const ProjectDashboard = () => {
       description: proj.description,
       imageUrl: proj.imageUrl || '',
       repoUrl: proj.repoUrl || '',
+      frontendRepoUrl: proj.frontendRepoUrl || '',
+      backendRepoUrl: proj.backendRepoUrl || '',
       liveUrl: proj.liveUrl || '',
       startDate: proj.startDate ? proj.startDate.substring(0, 10) : '',
       endDate: proj.endDate ? proj.endDate.substring(0, 10) : '',
@@ -74,7 +80,7 @@ const ProjectDashboard = () => {
 
   if (isFormOpen) {
     return (
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 max-w-4xl dark:bg-gray-900 dark:border-gray-700">
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 dark:bg-gray-900 dark:border-gray-700">
         <BackButton onClick={closeForm} />
         <h3 className="text-xl font-bold text-gray-900 mb-6 dark:text-gray-100">{editingId ? 'Editar Proyecto' : 'Nuevo Proyecto'}</h3>
         {error && <ErrorBanner message={error} onDismiss={clearError} />}
@@ -83,7 +89,9 @@ const ProjectDashboard = () => {
             <div className="md:col-span-2">
               <Input label="Título del Proyecto" name="title" required value={formData.title} onChange={handleChange} />
             </div>
-            <Input label="Repositorio (URL de GitHub)" type="url" name="repoUrl" value={formData.repoUrl} onChange={handleChange} placeholder="https://github.com/..." />
+            <Input label="Repositorio (URL de GitHub) - Proyecto Único" type="url" name="repoUrl" value={formData.repoUrl} onChange={handleChange} placeholder="https://github.com/..." />
+            <Input label="Frontend (URL del Repo)" type="url" name="frontendRepoUrl" value={formData.frontendRepoUrl} onChange={handleChange} placeholder="https://github.com/" />
+            <Input label="Backend (URL del Repo)" type="url" name="backendRepoUrl" value={formData.backendRepoUrl} onChange={handleChange} placeholder="https://github.com/..." />
             <Input label="Sitio en Vivo (URL)" type="url" name="liveUrl" value={formData.liveUrl} onChange={handleChange} placeholder="https://..." />
             <Input label="URL de la Imagen / Captura" type="url" name="imageUrl" value={formData.imageUrl} onChange={handleChange} placeholder="https://..." />
             <div className="flex gap-4">
@@ -105,7 +113,7 @@ const ProjectDashboard = () => {
   }
 
   return (
-    <div className="space-y-6 max-w-4xl">
+    <div className="space-y-6">
       <SectionHeader
         title="Proyectos / Portafolio"
         subtitle="Gestiona los proyectos que se mostrarán en tu portafolio."
@@ -166,6 +174,16 @@ const ProjectDashboard = () => {
                   {proj.repoUrl && (
                     <a href={proj.repoUrl} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100">
                       <Github className="h-4 w-4 mr-1.5" /> Código
+                    </a>
+                  )}
+                  {proj.frontendRepoUrl && (
+                    <a href={proj.frontendRepoUrl} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100">
+                      <Github className="h-4 w-4 mr-1.5" /> Frontend
+                    </a>
+                  )}
+                  {proj.backendRepoUrl && (
+                    <a href={proj.backendRepoUrl} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100">
+                      <Github className="h-4 w-4 mr-1.5" /> Backend
                     </a>
                   )}
                   {proj.liveUrl && (

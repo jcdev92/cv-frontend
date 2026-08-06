@@ -115,7 +115,9 @@ const DashboardLayout = () => {
           </div>
         </header>
         <main className="p-4 md:p-8 flex-1">
-          <Outlet />
+          <div className="w-full max-w-5xl mx-auto">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>

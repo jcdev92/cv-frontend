@@ -87,7 +87,7 @@ const SkillDashboard = () => {
   }
 
   return (
-    <div className="space-y-6 max-w-4xl">
+    <div className="space-y-6">
       <SectionHeader
         title="Habilidades (Skills)"
         subtitle="Organiza tus herramientas y nivel de experiencia."

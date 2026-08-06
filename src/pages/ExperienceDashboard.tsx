@@ -73,7 +73,7 @@ const ExperienceDashboard = () => {
 
   if (isFormOpen) {
     return (
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 max-w-4xl dark:bg-gray-900 dark:border-gray-700">
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 dark:bg-gray-900 dark:border-gray-700">
         <BackButton onClick={closeForm} />
         <h3 className="text-xl font-bold text-gray-900 mb-6 dark:text-gray-100">{editingId ? 'Editar Experiencia' : 'Nueva Experiencia'}</h3>
         {error && <ErrorBanner message={error} onDismiss={clearError} />}
@@ -98,7 +98,7 @@ const ExperienceDashboard = () => {
   }
 
   return (
-    <div className="space-y-6 max-w-4xl">
+    <div className="space-y-6">
       <SectionHeader
         title="Experiencia Laboral"
         subtitle="Gestiona tu historial de trabajos y proyectos empresariales."

@@ -65,7 +65,7 @@ const EducationDashboard = () => {
 
   if (isFormOpen) {
     return (
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 max-w-4xl dark:bg-gray-900 dark:border-gray-700">
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 dark:bg-gray-900 dark:border-gray-700">
         <BackButton onClick={closeForm} />
         <h3 className="text-xl font-bold text-gray-900 mb-6 dark:text-gray-100">{editingId ? 'Editar Educación' : 'Nueva Educación'}</h3>
         {error && <ErrorBanner message={error} onDismiss={clearError} />}
@@ -88,7 +88,7 @@ const EducationDashboard = () => {
   }
 
   return (
-    <div className="space-y-6 max-w-4xl">
+    <div className="space-y-6">
       <SectionHeader
         title="Educación"
         subtitle="Gestiona tu historial académico y certificaciones."

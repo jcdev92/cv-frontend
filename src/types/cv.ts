@@ -46,6 +46,8 @@ export interface Project {
   description: string;
   imageUrl?: string;
   repoUrl?: string;
+  frontendRepoUrl?: string;
+  backendRepoUrl?: string;
   liveUrl?: string;
   technologies: string[];
   startDate?: string;

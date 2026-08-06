@@ -43,6 +43,16 @@ const ProjectList = ({ projects }: ProjectListProps) => {
                     <Github className="w-4 h-4 mr-1.5" /> Código
                   </a>
                 )}
+                {proj.frontendRepoUrl && (
+                  <a href={proj.frontendRepoUrl} target="_blank" rel="noreferrer" className="flex items-center text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100">
+                    <Github className="w-4 h-4 mr-1.5" /> Frontend
+                  </a>
+                )}
+                {proj.backendRepoUrl && (
+                  <a href={proj.backendRepoUrl} target="_blank" rel="noreferrer" className="flex items-center text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100">
+                    <Github className="w-4 h-4 mr-1.5" /> Backend
+                  </a>
+                )}
                 {proj.liveUrl && (
                   <a href={proj.liveUrl} target="_blank" rel="noreferrer" className="flex items-center text-sm font-medium text-blue-600 hover:text-blue-800 dark:hover:text-blue-400">
                     <ExternalLink className="w-4 h-4 mr-1.5" /> Ver Proyecto
