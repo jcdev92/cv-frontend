@@ -85,16 +85,26 @@ const ProjectDashboard = () => {
         <h3 className="text-xl font-bold text-gray-900 mb-6 dark:text-gray-100">{editingId ? 'Editar Proyecto' : 'Nuevo Proyecto'}</h3>
         {error && <ErrorBanner message={error} onDismiss={clearError} />}
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="md:col-span-2">
               <Input label="Título del Proyecto" name="title" required value={formData.title} onChange={handleChange} />
             </div>
-            <Input label="Repositorio (URL de GitHub) - Proyecto Único" type="url" name="repoUrl" value={formData.repoUrl} onChange={handleChange} placeholder="https://github.com/..." />
-            <Input label="Frontend (URL del Repo)" type="url" name="frontendRepoUrl" value={formData.frontendRepoUrl} onChange={handleChange} placeholder="https://github.com/" />
-            <Input label="Backend (URL del Repo)" type="url" name="backendRepoUrl" value={formData.backendRepoUrl} onChange={handleChange} placeholder="https://github.com/..." />
-            <Input label="Sitio en Vivo (URL)" type="url" name="liveUrl" value={formData.liveUrl} onChange={handleChange} placeholder="https://..." />
-            <Input label="URL de la Imagen / Captura" type="url" name="imageUrl" value={formData.imageUrl} onChange={handleChange} placeholder="https://..." />
-            <div className="flex gap-4">
+            <div className="md:col-span-2 lg:col-span-1">
+              <Input label="Repositorio (URL de GitHub) - Proyecto Único" type="url" name="repoUrl" value={formData.repoUrl} onChange={handleChange} placeholder="https://github.com/..." />
+            </div>
+            <div className="md:col-span-2 lg:col-span-1">
+              <Input label="Frontend (URL del Repo)" type="url" name="frontendRepoUrl" value={formData.frontendRepoUrl} onChange={handleChange} placeholder="https://github.com/" />
+            </div>
+            <div className="md:col-span-2 lg:col-span-1">
+              <Input label="Backend (URL del Repo)" type="url" name="backendRepoUrl" value={formData.backendRepoUrl} onChange={handleChange} placeholder="https://github.com/..." />
+            </div>
+            <div className="md:col-span-2 lg:col-span-1">
+              <Input label="URL de la Imagen / Captura" type="url" name="imageUrl" value={formData.imageUrl} onChange={handleChange} placeholder="https://..." />
+            </div>
+            <div className="md:col-span-2 lg:col-span-1">
+              <Input label="Sitio en Vivo (URL)" type="url" name="liveUrl" value={formData.liveUrl} onChange={handleChange} placeholder="https://..." />
+            </div>
+            <div className="flex flex-col gap-y-4 md:flex-row md:gap-x-4 md:gap-y-0 md:col-span-2">
               <div className="flex-1">
                 <Input label="Inicio (Opcional)" type="date" name="startDate" value={formData.startDate} onChange={handleChange} />
               </div>
