@@ -152,9 +152,9 @@ const CVDashboard = () => {
           .cv-header h1 { font-size: 22pt; font-weight: bold; margin: 0; letter-spacing: -0.5px; }
           .cv-header h2 { font-size: 12pt; font-weight: normal; margin: 0.2em 0 0; color: #333; }
           .cv-contact { font-size: 9pt; margin-top: 0.5em; color: #333; word-break: break-all; }
-          .cv-section { margin-bottom: 1.5em; page-break-inside: avoid; }
-          .cv-section h3 { font-size: 12pt; font-weight: bold; border-bottom: 1px solid #333; padding-bottom: 0.2em; margin-bottom: 0.6em; text-transform: uppercase; letter-spacing: 0.5px; }
-          .cv-item { margin-bottom: 0.8em; page-break-inside: avoid; }
+          .cv-section { margin-bottom: 1em; }
+          .cv-section h3 { font-size: 12pt; font-weight: bold; border-bottom: 1px solid #333; padding-bottom: 0.2em; margin-bottom: 0.6em; text-transform: uppercase; letter-spacing: 0.5px; break-after: avoid; }
+          .cv-item { margin-bottom: 0.7em; break-inside: avoid; }
           .cv-item-title { font-weight: bold; font-size: 10pt; margin-bottom: 0.1em; }
           .cv-item-sub { font-style: italic; font-size: 9pt; margin: 0.1em 0; color: #555; }
           .cv-item-meta { font-size: 9pt; margin: 0.2em 0; color: #333; }
