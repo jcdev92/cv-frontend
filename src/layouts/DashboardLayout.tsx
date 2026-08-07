@@ -29,7 +29,7 @@ const DashboardLayout = () => {
       <div className="md:hidden flex items-center justify-between bg-white border-b border-gray-200 px-4 py-3 z-20 dark:bg-gray-900 dark:border-gray-700">
         <div className="flex items-center">
           <LayoutDashboard className="h-6 w-6 text-blue-600 mr-2" />
-          <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">Admin CV</h1>
+          <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">Portfolio Manager</h1>
         </div>
         <div className="flex items-center gap-1">
           <ThemeToggle />
@@ -60,7 +60,7 @@ const DashboardLayout = () => {
       `}>
         <div className="h-16 hidden md:flex items-center px-6 border-b border-gray-200 dark:border-gray-700">
           <LayoutDashboard className="h-6 w-6 text-blue-600 mr-2" />
-          <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">Admin CV</h1>
+          <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">Portfolio Manager</h1>
         </div>
 
         {/* Botón cerrar en móvil */}
