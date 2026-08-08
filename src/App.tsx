@@ -10,6 +10,7 @@ import EducationDashboard from './pages/EducationDashboard';
 import ProjectDashboard from './pages/ProjectDashboard';
 import SkillDashboard from './pages/SkillDashboard';
 import CVDashboard from './pages/CVDashboard';
+import ChangePassword from './pages/ChangePassword';
 
 function App() {
   const checkAuth = useAuthStore((state) => state.checkAuth);
@@ -36,6 +37,7 @@ function App() {
           <Route path="projects" element={<ProjectDashboard />} />
           <Route path="skills" element={<SkillDashboard />} />
           <Route path="cv" element={<CVDashboard />} />
+          <Route path="change-password" element={<ChangePassword />} />
         </Route>
       </Routes>
     </BrowserRouter>

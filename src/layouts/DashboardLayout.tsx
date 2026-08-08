@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, Navigate, Outlet } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
-import { LogOut, LayoutDashboard, UserCircle, Briefcase, GraduationCap, Code, Star, Menu, X, Eye, FileText } from 'lucide-react';
+import { LogOut, LayoutDashboard, UserCircle, Briefcase, GraduationCap, Code, Star, Menu, X, Eye, FileText, KeyRound } from 'lucide-react';
 import { ThemeToggle } from '../components/ThemeToggle';
 
 const DashboardLayout = () => {
@@ -20,6 +20,7 @@ const DashboardLayout = () => {
     { name: 'Proyectos', icon: Code, path: '/admin/projects' },
     { name: 'Habilidades', icon: Star, path: '/admin/skills' },
     { name: 'CV / Currículum', icon: FileText, path: '/admin/cv' },
+    { name: 'Contraseña', icon: KeyRound, path: '/admin/change-password' },
   ];
 
   return (

@@ -1,75 +1,81 @@
-# React + TypeScript + Vite
+# cv-frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend del portafolio + panel de administración para mantener tu C.V y portafolio al día.
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **React 19** + **TypeScript**
+- **Vite 8**
+- **React Router** (rutas público/admin)
+- **TanStack Query** (fetch y caché de datos)
+- **Zustand** (estado global, incl. autenticación)
+- **Axios** (cliente HTTP)
+- **Tailwind CSS 4**
+- **lucide-react** (iconos)
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Estructura
 
 ```
+src/
+  api/          # Cliente axios e interceptor de autenticación
+  components/   # Componentes de portafolio y Dashboard
+  layouts/      # Layout del dashboard con navegación
+  pages/        # Vistas público y admin
+  store/        # Zustand stores (auth)
+  types/        # Tipos del dominio (CV)
+  theme/        # Theme provider
+```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Páginas y dashboard
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- **Portafolio público:** `PublicHome` (Héroe, Experiencia, Proyectos, Habilidades, Educación)
+- **Admin:**
+  - `ProfileDashboard` - perfil, contacto, redes sociales y foto
+  - `ExperienceDashboard` - historial laboral
+  - `ProjectDashboard` - proyectos y enlaces (repo frontend/backend)
+  - `SkillDashboard` - habilidades por categoría
+  - `EducationDashboard` - formación académica
+  - `CVDashboard` - generador y descarga del CV en PDF
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Requisitos
+
+- Node.js 18+ (Vite 8)
+- La API corriendo (ver [`api-cv`](../api-cv/README.md))
+
+## Variables de entorno (`.env`)
 
 ```
+VITE_API_URL=http://localhost:5000/api
+```
+
+| Variable       | Descripción                                   |
+| -------------- | --------------------------------------------- |
+| `VITE_API_URL` | URL base de la API (termina en `/api`)        |
+
+> En producción (Vercel) define `VITE_API_URL` apuntando a la API desplegada, p. ej. `https://tu-api.onrender.com/api`.
+
+## Instalación
+
+```bash
+npm install
+```
+
+## Scripts
+
+```bash
+npm run dev      # Servidor de desarrollo (Vite) en http://localhost:5173
+npm run build    # Compila TypeScript y genera el bundle de producción en dist/
+npm run lint     # ESLint
+npm run preview  # Sirve en local el build de producción
+```
+
+## Cómo usar
+
+1. Levanta la API en el puerto `5000` (y siembra datos con `npm run seed`).
+2. `npm run dev` para desarrollo.
+3. Regístrate/ingresa desde el login del dashboard.
+4. Edita los datos desde el panel de administración y descarga el C.V desde `CVDashboard`.
+
+## Generador de CV (PDF)
+
+Desde `CVDashboard` puedes generar y descargar tu currículum en PDF. Genera una ventana de impresión con el perfil, experiencia, educación, habilidades y proyectos en formato A4 siguiendo el estándar Harvard. Corrige cualquier espacio en blanco entre segmentos ajustando el CSS del bloque de estilos dentro de `src/pages/CVDashboard.tsx` (clase `.cv-section` y `.cv-item`).

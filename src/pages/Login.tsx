@@ -7,8 +7,8 @@ import { Briefcase } from 'lucide-react';
 import { ThemeToggle } from '../components/ThemeToggle';
 
 const Login = () => {
-  const [email, setEmail] = useState('admin@alexdev.com');
-  const [password, setPassword] = useState('***REMOVED***');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const login = useAuthStore((state) => state.login);
   const navigate = useNavigate();
