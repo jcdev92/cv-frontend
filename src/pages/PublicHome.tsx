@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api/axios';
-import { Loader2 } from 'lucide-react';
 import type { Profile, Education, Experience, Project, Skill } from '../types/cv';
 
 // Importación de componentes refactorizados
@@ -10,6 +9,7 @@ import ExperienceList from '../components/portfolio/ExperienceList';
 import ProjectList from '../components/portfolio/ProjectList';
 import SkillsList from '../components/portfolio/SkillsList';
 import EducationList from '../components/portfolio/EducationList';
+import PortfolioSkeleton from '../components/portfolio/PortfolioSkeleton';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { generateCvPdf } from '../utils/generateCvPdf';
 
@@ -22,6 +22,7 @@ const PublicHome = () => {
     educations: [] as Education[]
   });
   const [loading, setLoading] = useState(true);
+  const [showColdStartMessage, setShowColdStartMessage] = useState(false);
 
   const handleDownloadCv = () => {
     const { profile } = data;
@@ -57,12 +58,13 @@ const PublicHome = () => {
     fetchAllData();
   }, []);
 
+  useEffect(() => {
+    const timer = setTimeout(() => setShowColdStartMessage(true), 5000);
+    return () => clearTimeout(timer);
+  }, []);
+
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
-        <Loader2 className="animate-spin text-blue-600 h-12 w-12" />
-      </div>
-    );
+    return <PortfolioSkeleton showColdStartMessage={showColdStartMessage} />;
   }
 
   const { profile, experiences, projects, skills, educations } = data;
