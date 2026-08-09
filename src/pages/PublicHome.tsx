@@ -11,6 +11,7 @@ import ProjectList from '../components/portfolio/ProjectList';
 import SkillsList from '../components/portfolio/SkillsList';
 import EducationList from '../components/portfolio/EducationList';
 import { ThemeToggle } from '../components/ThemeToggle';
+import { generateCvPdf } from '../utils/generateCvPdf';
 
 const PublicHome = () => {
   const [data, setData] = useState({
@@ -21,6 +22,12 @@ const PublicHome = () => {
     educations: [] as Education[]
   });
   const [loading, setLoading] = useState(true);
+
+  const handleDownloadCv = () => {
+    const { profile } = data;
+    if (!profile) return;
+    generateCvPdf({ profile, experiences: data.experiences, projects: data.projects, skills: data.skills, educations: data.educations });
+  };
 
   useEffect(() => {
     const fetchAllData = async () => {
@@ -98,7 +105,7 @@ const PublicHome = () => {
       <main className="pt-24 pb-20">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           
-          <HeroSection profile={profile} />
+          <HeroSection profile={profile} onDownloadCv={handleDownloadCv} />
           <ExperienceList experiences={experiences} />
           <ProjectList projects={projects} />
           
