@@ -4,9 +4,10 @@ import { Plus, Edit2, Trash2, Calendar, Building, Briefcase, MapPin } from 'luci
 import { useCrudResource } from '../hooks/useCrudResource';
 import { useForm } from '../hooks/useForm';
 import {
-  Input, Textarea, Checkbox, Button, IconButton, Spinner, EmptyState,
-  SectionHeader, FormActions, BackButton, ErrorBanner,
+  Input, Textarea, Checkbox, Button, IconButton, EmptyState,
+  SectionHeader, FormActions, BackButton, ErrorBanner, DashboardSkeleton,
 } from '../components/admin/ui';
+import { useColdStart } from '../hooks/useColdStart';
 
 interface ExperienceForm {
   jobTitle: string;
@@ -45,6 +46,8 @@ const ExperienceDashboard = () => {
       }),
       deleteConfirmMessage: '¿Estás seguro de que deseas eliminar esta experiencia?',
     });
+
+  const showColdStartMessage = useColdStart(loading);
 
   const handleNew = () => {
     reset();
@@ -112,7 +115,7 @@ const ExperienceDashboard = () => {
       {error && <ErrorBanner message={error} onDismiss={clearError} />}
 
       {loading ? (
-        <Spinner />
+        <DashboardSkeleton showColdStartMessage={showColdStartMessage} variant="list" />
       ) : experiences.length === 0 ? (
         <EmptyState icon={Briefcase} title="No hay experiencias" description="Comienza agregando tu trabajo más reciente." />
       ) : (

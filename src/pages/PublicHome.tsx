@@ -12,11 +12,11 @@ import EducationList from '../components/portfolio/EducationList';
 import PortfolioSkeleton from '../components/portfolio/PortfolioSkeleton';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { generateCvPdf } from '../utils/generateCvPdf';
+import { useColdStart } from '../hooks/useColdStart';
 
 const REQUEST_TIMEOUT_MS = 30000;
 const AUTO_RETRY_COUNT = 2;
 const RETRY_DELAY_MS = 6000;
-const COLD_START_MESSAGE_DELAY_MS = 3000;
 
 const PublicHome = () => {
   const [data, setData] = useState({
@@ -29,7 +29,8 @@ const PublicHome = () => {
   const [attempt, setAttempt] = useState(0);
   const [loading, setLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
-  const [showColdStartMessage, setShowColdStartMessage] = useState(false);
+
+  const showColdStartMessage = useColdStart(loading);
 
   const handleDownloadCv = () => {
     const { profile } = data;
@@ -39,7 +40,6 @@ const PublicHome = () => {
 
   const handleRetry = () => {
     setHasError(false);
-    setShowColdStartMessage(false);
     setLoading(true);
     setAttempt((a) => a + 1);
   };
@@ -96,20 +96,6 @@ const PublicHome = () => {
       cancelled = true;
     };
   }, [attempt]);
-
-  useEffect(() => {
-    if (!loading || showColdStartMessage) return;
-
-    const start = Date.now();
-    const interval = setInterval(() => {
-      if (Date.now() - start >= COLD_START_MESSAGE_DELAY_MS) {
-        setShowColdStartMessage(true);
-        clearInterval(interval);
-      }
-    }, 500);
-
-    return () => clearInterval(interval);
-  }, [attempt, loading, showColdStartMessage]);
 
   if (loading) {
     return <PortfolioSkeleton showColdStartMessage={showColdStartMessage} />;

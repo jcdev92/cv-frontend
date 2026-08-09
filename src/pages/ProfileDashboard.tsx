@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import api from '../api/axios';
 import { useAuthStore } from '../store/authStore';
-import { Save, Loader2 } from 'lucide-react';
+import { Save } from 'lucide-react';
 import type { Profile } from '../types/cv';
-import { Input, Textarea, Button, ErrorBanner } from '../components/admin/ui';
+import { Input, Textarea, Button, ErrorBanner, DashboardSkeleton } from '../components/admin/ui';
+import { useColdStart } from '../hooks/useColdStart';
 
 interface ProfileForm {
   firstName: string;
@@ -60,8 +61,10 @@ const ProfileDashboard = () => {
     enabled: !!user?._id,
   });
 
+  const showColdStartMessage = useColdStart(isLoading);
+
   if (isLoading) {
-    return <div className="flex justify-center py-20"><Loader2 className="animate-spin text-blue-600 h-8 w-8" /></div>;
+    return <DashboardSkeleton showColdStartMessage={showColdStartMessage} variant="form" />;
   }
 
   return (

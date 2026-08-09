@@ -4,9 +4,10 @@ import { Plus, Edit2, Trash2, Star } from 'lucide-react';
 import { useCrudResource } from '../hooks/useCrudResource';
 import { useForm } from '../hooks/useForm';
 import {
-  Input, Select, Button, IconButton, Spinner, EmptyState,
-  SectionHeader, FormActions, BackButton, ErrorBanner,
+  Input, Select, Button, IconButton, EmptyState,
+  SectionHeader, FormActions, BackButton, ErrorBanner, DashboardSkeleton,
 } from '../components/admin/ui';
+import { useColdStart } from '../hooks/useColdStart';
 
 interface SkillForm {
   name: string;
@@ -27,6 +28,8 @@ const SkillDashboard = () => {
     useCrudResource<Skill, SkillForm>('/skills', user?._id, {
       deleteConfirmMessage: '¿Eliminar habilidad?',
     });
+
+  const showColdStartMessage = useColdStart(loading);
 
   const handleNew = () => {
     reset();
@@ -101,7 +104,7 @@ const SkillDashboard = () => {
       {error && <ErrorBanner message={error} onDismiss={clearError} />}
 
       {loading ? (
-        <Spinner />
+        <DashboardSkeleton showColdStartMessage={showColdStartMessage} variant="list" />
       ) : skills.length === 0 ? (
         <EmptyState icon={Star} title="Sin habilidades" description="Añade los lenguajes o herramientas que dominas." />
       ) : (
