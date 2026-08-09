@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api/axios';
-import { Loader2 } from 'lucide-react';
 import type { Profile, Education, Experience, Project, Skill } from '../types/cv';
 
 // Importación de componentes refactorizados
@@ -10,7 +9,14 @@ import ExperienceList from '../components/portfolio/ExperienceList';
 import ProjectList from '../components/portfolio/ProjectList';
 import SkillsList from '../components/portfolio/SkillsList';
 import EducationList from '../components/portfolio/EducationList';
+import PortfolioSkeleton from '../components/portfolio/PortfolioSkeleton';
 import { ThemeToggle } from '../components/ThemeToggle';
+import { generateCvPdf } from '../utils/generateCvPdf';
+
+const REQUEST_TIMEOUT_MS = 30000;
+const AUTO_RETRY_COUNT = 2;
+const RETRY_DELAY_MS = 6000;
+const COLD_START_MESSAGE_DELAY_MS = 3000;
 
 const PublicHome = () => {
   const [data, setData] = useState({
@@ -20,18 +26,44 @@ const PublicHome = () => {
     skills: [] as Skill[],
     educations: [] as Education[]
   });
+  const [attempt, setAttempt] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+  const [showColdStartMessage, setShowColdStartMessage] = useState(false);
+
+  const handleDownloadCv = () => {
+    const { profile } = data;
+    if (!profile) return;
+    generateCvPdf({ profile, experiences: data.experiences, projects: data.projects, skills: data.skills, educations: data.educations });
+  };
+
+  const handleRetry = () => {
+    setHasError(false);
+    setShowColdStartMessage(false);
+    setLoading(true);
+    setAttempt((a) => a + 1);
+  };
 
   useEffect(() => {
-    const fetchAllData = async () => {
+    let cancelled = false;
+
+    const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+    const fetchAllData = async (retriesLeft: number): Promise<void> => {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+      const requestSignal = controller.signal;
+
       try {
         const [profRes, expRes, projRes, skillRes, eduRes] = await Promise.all([
-          api.get('/profile'),
-          api.get('/experiences'),
-          api.get('/projects'),
-          api.get('/skills'),
-          api.get('/educations')
+          api.get('/profile', { signal: requestSignal }),
+          api.get('/experiences', { signal: requestSignal }),
+          api.get('/projects', { signal: requestSignal }),
+          api.get('/skills', { signal: requestSignal }),
+          api.get('/educations', { signal: requestSignal })
         ]);
+
+        if (cancelled) return;
 
         setData({
           profile: profRes.data,
@@ -40,20 +72,67 @@ const PublicHome = () => {
           skills: skillRes.data,
           educations: eduRes.data
         });
-      } catch (error) {
-        console.error('Error fetching public data:', error);
-      } finally {
         setLoading(false);
+      } catch (error) {
+        if (cancelled) return;
+
+        if (retriesLeft > 0) {
+          await sleep(RETRY_DELAY_MS);
+          if (cancelled) return;
+          await fetchAllData(retriesLeft - 1);
+        } else {
+          console.error('Error fetching public data:', error);
+          setLoading(false);
+          setHasError(true);
+        }
+      } finally {
+        clearTimeout(timeoutId);
       }
     };
 
-    fetchAllData();
-  }, []);
+    fetchAllData(AUTO_RETRY_COUNT);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [attempt]);
+
+  useEffect(() => {
+    if (!loading || showColdStartMessage) return;
+
+    const start = Date.now();
+    const interval = setInterval(() => {
+      if (Date.now() - start >= COLD_START_MESSAGE_DELAY_MS) {
+        setShowColdStartMessage(true);
+        clearInterval(interval);
+      }
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, [attempt, loading, showColdStartMessage]);
 
   if (loading) {
+    return <PortfolioSkeleton showColdStartMessage={showColdStartMessage} />;
+  }
+
+  if (hasError) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
-        <Loader2 className="animate-spin text-blue-600 h-12 w-12" />
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4 text-center dark:bg-gray-950">
+        <h1 className="text-2xl font-bold text-gray-900 mb-3 dark:text-gray-100">No pudimos conectar con el servidor</h1>
+        <p className="text-gray-600 max-w-md mb-6 dark:text-gray-400">
+          La API está alojada en un hosting gratuito que se suspende por inactividad y tarda en arrancar de nuevo. Inténtalo de nuevo en unos segundos.
+        </p>
+        <div className="flex flex-wrap justify-center gap-4">
+          <button
+            onClick={handleRetry}
+            className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+          >
+            Reintentar
+          </button>
+          <Link to="/admin" className="px-6 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">
+            Ir al Panel de Administración
+          </Link>
+        </div>
       </div>
     );
   }
@@ -98,7 +177,7 @@ const PublicHome = () => {
       <main className="pt-24 pb-20">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           
-          <HeroSection profile={profile} />
+          <HeroSection profile={profile} onDownloadCv={handleDownloadCv} />
           <ExperienceList experiences={experiences} />
           <ProjectList projects={projects} />
           

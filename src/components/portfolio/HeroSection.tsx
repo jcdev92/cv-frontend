@@ -3,9 +3,10 @@ import type { Profile } from '../../types/cv';
 
 interface HeroSectionProps {
   profile: Profile;
+  onDownloadCv: () => void;
 }
 
-const HeroSection = ({ profile }: HeroSectionProps) => {
+const HeroSection = ({ profile, onDownloadCv }: HeroSectionProps) => {
   return (
     <section id="about" className="py-12 md:py-20 flex flex-col-reverse md:flex-row items-center md:justify-between gap-10 border-b border-gray-200 dark:border-gray-700">
       <div className="flex-1 text-center md:text-left">
@@ -20,11 +21,9 @@ const HeroSection = ({ profile }: HeroSectionProps) => {
         </p>
 
         <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mb-8">
-          {profile.resumeUrl && (
-            <a href={profile.resumeUrl} target="_blank" rel="noreferrer" className="flex items-center px-6 py-3 bg-gray-900 text-white font-medium rounded-lg hover:bg-gray-800 transition shadow-sm dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-white">
-              <Download className="w-4 h-4 mr-2" /> Descargar CV
-            </a>
-          )}
+          <button onClick={onDownloadCv} className="flex items-center px-6 py-3 bg-gray-900 text-white font-medium rounded-lg hover:bg-gray-800 transition shadow-sm dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-white">
+            <Download className="w-4 h-4 mr-2" /> Descargar CV
+          </button>
           {profile.email && (
             <a href={`mailto:${profile.email}`} className="flex items-center px-6 py-3 bg-white text-gray-700 font-medium rounded-lg border border-gray-200 hover:bg-gray-50 transition shadow-sm dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-700">
               <Mail className="w-4 h-4 mr-2" /> Contáctame

@@ -73,15 +73,15 @@ const DashboardLayout = () => {
 
         <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
           {navItems.map((item) => (
-            <a
+            <Link
               key={item.name}
-              href={item.path}
+              to={item.path}
               onClick={() => setIsMobileMenuOpen(false)} // Cerrar menú al hacer clic en móvil
               className="flex items-center px-2 py-2.5 text-sm font-medium rounded-md text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-colors dark:text-gray-300 dark:hover:text-blue-400 dark:hover:bg-blue-500/10"
             >
               <item.icon className="mr-3 h-5 w-5 text-gray-400 dark:text-gray-500" />
               {item.name}
-            </a>
+            </Link>
           ))}
         </nav>
 
