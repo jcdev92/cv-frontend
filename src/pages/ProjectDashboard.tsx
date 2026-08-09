@@ -4,9 +4,10 @@ import { Plus, Edit2, Trash2, Code, ExternalLink, Github, ImageIcon } from 'luci
 import { useCrudResource } from '../hooks/useCrudResource';
 import { useForm } from '../hooks/useForm';
 import {
-  Input, Textarea, Button, IconButton, Spinner, EmptyState,
-  SectionHeader, FormActions, BackButton, ErrorBanner,
+  Input, Textarea, Button, IconButton, EmptyState,
+  SectionHeader, FormActions, BackButton, ErrorBanner, DashboardSkeleton,
 } from '../components/admin/ui';
+import { useColdStart } from '../hooks/useColdStart';
 
 interface ProjectForm {
   title: string;
@@ -50,6 +51,8 @@ const ProjectDashboard = () => {
       }),
       deleteConfirmMessage: '¿Estás seguro de que deseas eliminar este proyecto?',
     });
+
+  const showColdStartMessage = useColdStart(loading);
 
   const handleNew = () => {
     reset();
@@ -137,7 +140,7 @@ const ProjectDashboard = () => {
       {error && <ErrorBanner message={error} onDismiss={clearError} />}
 
       {loading ? (
-        <Spinner />
+        <DashboardSkeleton showColdStartMessage={showColdStartMessage} variant="grid" />
       ) : projects.length === 0 ? (
         <EmptyState icon={Code} title="No hay proyectos" description="Añade proyectos para construir tu portafolio." />
       ) : (

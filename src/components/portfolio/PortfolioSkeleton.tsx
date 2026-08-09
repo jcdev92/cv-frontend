@@ -1,12 +1,8 @@
-import { Cloud } from 'lucide-react';
+import { ColdStartBanner, SkeletonBlock } from '../admin/ui';
 
 interface PortfolioSkeletonProps {
   showColdStartMessage: boolean;
 }
-
-const SkeletonBlock = ({ className }: { className: string }) => (
-  <div className={`animate-pulse rounded-lg bg-gray-200 dark:bg-gray-800 ${className}`} />
-);
 
 const PortfolioSkeleton = ({ showColdStartMessage }: PortfolioSkeletonProps) => {
   return (
@@ -24,20 +20,7 @@ const PortfolioSkeleton = ({ showColdStartMessage }: PortfolioSkeletonProps) => 
 
       <main className="pt-24 pb-20">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          {showColdStartMessage && (
-            <div className="mb-6 flex items-start justify-between gap-4 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800 dark:border-amber-900/50 dark:bg-amber-900/20 dark:text-amber-200">
-              <div className="flex items-start gap-3">
-                <Cloud className="mt-0.5 h-5 w-5 shrink-0" />
-                <div>
-                  <p className="font-semibold">El servidor está arrancando</p>
-                  <p className="mt-0.5 text-xs opacity-90">
-                    La API está alojada en un hosting gratuito que se suspende por inactividad. La primera carga puede tardar entre 15 y 60 segundos. Se cargará automáticamente.
-                  </p>
-                </div>
-              </div>
-              <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-amber-600 border-t-transparent dark:border-amber-300" />
-            </div>
-          )}
+          {showColdStartMessage && <ColdStartBanner />}
 
           <div className="py-12 md:py-20 flex flex-col-reverse md:flex-row items-center md:justify-between gap-10 border-b border-gray-200 dark:border-gray-700">
             <div className="flex-1 w-full">

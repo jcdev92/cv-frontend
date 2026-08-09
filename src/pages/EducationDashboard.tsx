@@ -4,9 +4,10 @@ import { Plus, Edit2, Trash2, Calendar, MapPin, GraduationCap, Building2 } from 
 import { useCrudResource } from '../hooks/useCrudResource';
 import { useForm } from '../hooks/useForm';
 import {
-  Input, Textarea, Checkbox, Button, IconButton, Spinner, EmptyState,
-  SectionHeader, FormActions, BackButton, ErrorBanner,
+  Input, Textarea, Checkbox, Button, IconButton, EmptyState,
+  SectionHeader, FormActions, BackButton, ErrorBanner, DashboardSkeleton,
 } from '../components/admin/ui';
+import { useColdStart } from '../hooks/useColdStart';
 
 interface EducationForm {
   degree: string;
@@ -39,6 +40,8 @@ const EducationDashboard = () => {
       }),
       deleteConfirmMessage: '¿Estás seguro de que deseas eliminar este registro?',
     });
+
+  const showColdStartMessage = useColdStart(loading);
 
   const handleNew = () => {
     reset();
@@ -102,7 +105,7 @@ const EducationDashboard = () => {
       {error && <ErrorBanner message={error} onDismiss={clearError} />}
 
       {loading ? (
-        <Spinner />
+        <DashboardSkeleton showColdStartMessage={showColdStartMessage} variant="list" />
       ) : items.length === 0 ? (
         <EmptyState icon={GraduationCap} title="No hay educación registrada" description="Añade tus títulos universitarios o cursos relevantes." />
       ) : (

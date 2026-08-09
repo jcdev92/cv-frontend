@@ -3,8 +3,9 @@ import api from '../api/axios';
 import { useAuthStore } from '../store/authStore';
 import { Download, FileText } from 'lucide-react';
 import type { Profile, Education, Experience, Project, Skill } from '../types/cv';
-import { Button, Spinner, SectionHeader } from '../components/admin/ui';
+import { Button, SectionHeader, DashboardSkeleton } from '../components/admin/ui';
 import { generateCvPdf } from '../utils/generateCvPdf';
+import { useColdStart } from '../hooks/useColdStart';
 
 const CVDashboard = () => {
   const user = useAuthStore((state) => state.user);
@@ -56,6 +57,8 @@ const CVDashboard = () => {
 
   const isLoading = profileLoading || expLoading || projLoading || skillLoading || eduLoading;
 
+  const showColdStartMessage = useColdStart(isLoading);
+
   const formatDateRange = (startDate: string, endDate: string | undefined, isCurrent: boolean): string => {
     const start = new Date(startDate).toLocaleDateString('es-ES', { year: 'numeric', month: 'short' });
     if (isCurrent || !endDate) return `${start} — Presente`;
@@ -75,11 +78,7 @@ const CVDashboard = () => {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center py-20">
-        <Spinner />
-      </div>
-    );
+    return <DashboardSkeleton showColdStartMessage={showColdStartMessage} variant="form" />;
   }
 
   if (!profile) {
