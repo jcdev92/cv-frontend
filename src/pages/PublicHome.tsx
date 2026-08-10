@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import api from '../api/axios';
+import { useAuthStore } from '../store/authStore';
 import type { Profile, Education, Experience, Project, Skill } from '../types/cv';
 
 // Importación de componentes refactorizados
@@ -30,6 +31,8 @@ const PublicHome = () => {
   const [loading, setLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const logout = useAuthStore((state) => state.logout);
 
   const showColdStartMessage = useColdStart(loading);
 
@@ -48,6 +51,25 @@ const PublicHome = () => {
     setHasError(false);
     setLoading(true);
     setAttempt((a) => a + 1);
+  };
+
+  const demoEmail = import.meta.env.VITE_DEMO_EMAIL;
+  const showingDemo =
+    !!demoEmail && !!defaultUserEmail && defaultUserEmail.toLowerCase() === demoEmail.toLowerCase();
+
+  const handleTogglePortfolio = (e: React.MouseEvent) => {
+    e.preventDefault();
+    logout();
+    const target = showingDemo
+      ? import.meta.env.VITE_PORTFOLIO_USER_EMAIL || ''
+      : demoEmail || '';
+    navigate(`/?user=${target}`);
+  };
+
+  const handleAdminLogin = (e: React.MouseEvent) => {
+    e.preventDefault();
+    logout();
+    navigate('/login');
   };
 
   useEffect(() => {
@@ -134,9 +156,9 @@ const PublicHome = () => {
           >
             Reintentar
           </button>
-          <Link to="/admin" className="px-6 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">
+          <a href="/login" onClick={handleAdminLogin} className="px-6 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">
             Ir al Panel de Administración
-          </Link>
+          </a>
         </div>
       </div>
     );
@@ -149,9 +171,9 @@ const PublicHome = () => {
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4 text-center dark:bg-gray-950">
         <h1 className="text-3xl font-bold text-gray-900 mb-4 dark:text-gray-100">Perfil no encontrado</h1>
         <p className="text-gray-600 mb-6 dark:text-gray-400">Parece que aún no hay datos en la base de datos.</p>
-        <Link to="/admin" className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
+        <a href="/login" onClick={handleAdminLogin} className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
           Ir al Panel de Administración
-        </Link>
+        </a>
       </div>
     );
   }
@@ -172,17 +194,22 @@ const PublicHome = () => {
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggle />
-            {import.meta.env.VITE_DEMO_EMAIL && (
-              <Link
-                to={`/?user=${import.meta.env.VITE_DEMO_EMAIL}`}
+            {demoEmail && (
+              <a
+                href={showingDemo ? `/?user=${import.meta.env.VITE_PORTFOLIO_USER_EMAIL || ''}` : `/?user=${demoEmail}`}
+                onClick={handleTogglePortfolio}
                 className="text-sm font-medium text-emerald-600 hover:text-emerald-800 transition dark:text-emerald-400 dark:hover:text-emerald-300"
               >
-                Ver Demo
-              </Link>
+                {showingDemo ? 'Ver CV principal' : 'Ver Demo'}
+              </a>
             )}
-            <Link to="/admin" className="text-sm font-medium text-blue-600 hover:text-blue-800 transition dark:hover:text-blue-400">
+            <a
+              href="/login"
+              onClick={handleAdminLogin}
+              className="text-sm font-medium text-blue-600 hover:text-blue-800 transition dark:hover:text-blue-400"
+            >
               Admin Login
-            </Link>
+            </a>
           </div>
         </div>
       </nav>
