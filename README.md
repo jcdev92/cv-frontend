@@ -48,11 +48,16 @@ src/
 VITE_API_URL=http://localhost:5000/api
 ```
 
-| Variable       | Descripción                                   |
-| -------------- | --------------------------------------------- |
-| `VITE_API_URL` | URL base de la API (termina en `/api`)        |
+| Variable                   | Descripción                                                  |
+| -------------------------- | ------------------------------------------------------------ |
+| `VITE_API_URL`             | URL base de la API (termina en `/api`)                       |
+| `VITE_PORTFOLIO_USER_EMAIL`| Email del usuario cuyo CV se muestra por defecto en el dominio (opcional) |
+| `VITE_DEMO_EMAIL`          | Email de la cuenta demo para el botón "Entrar como invitado" (opcional) |
+| `VITE_DEMO_PASSWORD`       | Contraseña de la cuenta demo para el botón "Entrar como invitado" (opcional) |
 
 > En producción (Vercel) define `VITE_API_URL` apuntando a la API desplegada, p. ej. `https://tu-api.onrender.com/api`.
+>
+> Cada dominio puede mostrar un CV distinto: el público consulta `?user=<email>` y, si hay un `VITE_PORTFOLIO_USER_EMAIL` configurado, lo resuelve automáticamente. Con `VITE_DEMO_EMAIL`/`VITE_DEMO_PASSWORD` se activa un login de invitado (demo) en la página `/admin`.
 
 ## Instalación
 
