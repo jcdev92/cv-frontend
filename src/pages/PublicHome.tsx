@@ -12,6 +12,7 @@ import SkillsList from '../components/portfolio/SkillsList';
 import EducationList from '../components/portfolio/EducationList';
 import PortfolioSkeleton from '../components/portfolio/PortfolioSkeleton';
 import { ThemeToggle } from '../components/ThemeToggle';
+import { LogIn, Sparkles } from 'lucide-react';
 import { generateCvPdf } from '../utils/generateCvPdf';
 import { useColdStart } from '../hooks/useColdStart';
 
@@ -192,24 +193,28 @@ const PublicHome = () => {
             {experiences.length > 0 && <a href="#experience" className="hover:text-blue-600 transition dark:hover:text-blue-400">Experiencia</a>}
             {projects.length > 0 && <a href="#projects" className="hover:text-blue-600 transition dark:hover:text-blue-400">Proyectos</a>}
           </div>
-          <div className="flex items-center gap-2">
-            <ThemeToggle />
+          <div className="flex items-center gap-1 sm:gap-2">
+            <a
+              href="/login"
+              onClick={handleAdminLogin}
+              title="Admin Login"
+              aria-label="Ir a Admin Login"
+              className="p-2 rounded-md text-blue-600 hover:bg-blue-50 transition dark:text-blue-400 dark:hover:bg-blue-500/10"
+            >
+              <LogIn className="h-5 w-5" />
+            </a>
             {demoEmail && (
               <a
                 href={showingDemo ? `/?user=${import.meta.env.VITE_PORTFOLIO_USER_EMAIL || ''}` : `/?user=${demoEmail}`}
                 onClick={handleTogglePortfolio}
-                className="text-sm font-medium text-emerald-600 hover:text-emerald-800 transition dark:text-emerald-400 dark:hover:text-emerald-300"
+                title={showingDemo ? 'Ver CV principal' : 'Ver Demo'}
+                aria-label={showingDemo ? 'Ver CV principal' : 'Ver Demo'}
+                className="p-2 rounded-md text-emerald-600 hover:bg-emerald-50 transition dark:text-emerald-400 dark:hover:bg-emerald-500/10"
               >
-                {showingDemo ? 'Ver CV principal' : 'Ver Demo'}
+                <Sparkles className="h-5 w-5" />
               </a>
             )}
-            <a
-              href="/login"
-              onClick={handleAdminLogin}
-              className="text-sm font-medium text-blue-600 hover:text-blue-800 transition dark:hover:text-blue-400"
-            >
-              Admin Login
-            </a>
+            <ThemeToggle />
           </div>
         </div>
       </nav>
