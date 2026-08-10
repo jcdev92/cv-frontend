@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import api from '../api/axios';
 import type { Profile, Education, Experience, Project, Skill } from '../types/cv';
 
@@ -29,8 +29,14 @@ const PublicHome = () => {
   const [attempt, setAttempt] = useState(0);
   const [loading, setLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+  const [searchParams] = useSearchParams();
 
   const showColdStartMessage = useColdStart(loading);
+
+  // Resolver el usuario del portafolio público:
+  // 1) query string ?user=<email>
+  // 2) variable de entorno por dominio (VITE_PORTFOLIO_USER_EMAIL)
+  const defaultUserEmail = searchParams.get('user') || import.meta.env.VITE_PORTFOLIO_USER_EMAIL || null;
 
   const handleDownloadCv = () => {
     const { profile } = data;
@@ -55,12 +61,25 @@ const PublicHome = () => {
       const requestSignal = controller.signal;
 
       try {
+        // Si hay un email de portafolio por dominio, lo resolvemos a su _id
+        let userQuery = '';
+        if (defaultUserEmail) {
+          const users = await api.get('/users', { signal: requestSignal });
+          const usersList: Array<{ _id: string; email: string }> = Array.isArray(users.data) ? users.data : [];
+          const found = usersList.find(
+            (u) => u.email.toLowerCase() === defaultUserEmail.toLowerCase()
+          );
+          if (found) {
+            userQuery = `?user=${found._id}`;
+          }
+        }
+
         const [profRes, expRes, projRes, skillRes, eduRes] = await Promise.all([
-          api.get('/profile', { signal: requestSignal }),
-          api.get('/experiences', { signal: requestSignal }),
-          api.get('/projects', { signal: requestSignal }),
-          api.get('/skills', { signal: requestSignal }),
-          api.get('/educations', { signal: requestSignal })
+          api.get(`/profile${userQuery}`, { signal: requestSignal }),
+          api.get(`/experiences${userQuery}`, { signal: requestSignal }),
+          api.get(`/projects${userQuery}`, { signal: requestSignal }),
+          api.get(`/skills${userQuery}`, { signal: requestSignal }),
+          api.get(`/educations${userQuery}`, { signal: requestSignal })
         ]);
 
         if (cancelled) return;
@@ -95,7 +114,7 @@ const PublicHome = () => {
     return () => {
       cancelled = true;
     };
-  }, [attempt]);
+  }, [attempt, defaultUserEmail]);
 
   if (loading) {
     return <PortfolioSkeleton showColdStartMessage={showColdStartMessage} />;
@@ -153,6 +172,14 @@ const PublicHome = () => {
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggle />
+            {import.meta.env.VITE_DEMO_EMAIL && (
+              <Link
+                to={`/?user=${import.meta.env.VITE_DEMO_EMAIL}`}
+                className="text-sm font-medium text-emerald-600 hover:text-emerald-800 transition dark:text-emerald-400 dark:hover:text-emerald-300"
+              >
+                Ver Demo
+              </Link>
+            )}
             <Link to="/admin" className="text-sm font-medium text-blue-600 hover:text-blue-800 transition dark:hover:text-blue-400">
               Admin Login
             </Link>
