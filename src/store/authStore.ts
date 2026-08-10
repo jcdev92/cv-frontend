@@ -18,19 +18,19 @@ interface AuthState {
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
-  token: localStorage.getItem('token'),
+  token: sessionStorage.getItem('token'),
   user: null,
-  isAuthenticated: !!localStorage.getItem('token'),
+  isAuthenticated: !!sessionStorage.getItem('token'),
   loading: true,
 
   login: (token: string) => {
-    localStorage.setItem('token', token);
+    sessionStorage.setItem('token', token);
     set({ token, isAuthenticated: true });
     get().checkAuth(); // Cargar datos del usuario tras hacer login
   },
 
   logout: () => {
-    localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
     set({ token: null, user: null, isAuthenticated: false, loading: false });
   },
 
