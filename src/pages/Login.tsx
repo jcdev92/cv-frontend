@@ -30,6 +30,28 @@ const Login = () => {
     }
   };
 
+  const handleDemoLogin = async () => {
+    const demoEmail = import.meta.env.VITE_DEMO_EMAIL;
+    const demoPassword = import.meta.env.VITE_DEMO_PASSWORD;
+    if (!demoEmail || !demoPassword) return;
+
+    setError('');
+    try {
+      const response = await api.post('/auth/login', {
+        email: demoEmail,
+        password: demoPassword,
+      });
+      login(response.data.token);
+      navigate('/admin');
+    } catch (err: unknown) {
+      if (isAxiosError<{ message?: string }>(err)) {
+        setError(err.response?.data?.message || 'Error al iniciar sesión demo');
+      } else {
+        setError('Error al iniciar sesión demo');
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 dark:bg-gray-950">
       <div className="absolute top-4 right-4">
@@ -88,6 +110,21 @@ const Login = () => {
               Ingresar
             </button>
           </div>
+
+          {import.meta.env.VITE_DEMO_EMAIL && import.meta.env.VITE_DEMO_PASSWORD && (
+            <div>
+              <button
+                type="button"
+                onClick={handleDemoLogin}
+                className="group relative w-full flex justify-center py-2.5 px-4 border border-blue-200 text-sm font-medium rounded-md text-blue-600 bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors dark:border-blue-500/30 dark:text-blue-400 dark:bg-blue-500/10 dark:hover:bg-blue-500/20 dark:focus:ring-offset-gray-900"
+              >
+                Entrar como invitado (Demo)
+              </button>
+              <p className="mt-2 text-center text-xs text-gray-500 dark:text-gray-400">
+                {import.meta.env.VITE_DEMO_EMAIL} · prueba el panel y edita libremente
+              </p>
+            </div>
+          )}
         </form>
       </div>
     </div>

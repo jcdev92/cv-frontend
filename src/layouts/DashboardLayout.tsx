@@ -7,6 +7,7 @@ import { ThemeToggle } from '../components/ThemeToggle';
 const DashboardLayout = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const logout = useAuthStore((state) => state.logout);
+  const user = useAuthStore((state) => state.user);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   if (!isAuthenticated) {
@@ -87,7 +88,7 @@ const DashboardLayout = () => {
 
         <div className="px-4 pb-4">
           <Link
-            to="/"
+            to={user?.email ? `/?user=${user.email}` : "/"}
             onClick={() => setIsMobileMenuOpen(false)}
             className="flex items-center px-2 py-2.5 text-sm font-medium rounded-md text-blue-600 bg-blue-50 hover:bg-blue-100 transition-colors dark:text-blue-400 dark:bg-blue-500/10 dark:hover:bg-blue-500/20"
           >
