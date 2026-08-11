@@ -145,19 +145,19 @@ const PublicHome = () => {
 
   if (hasError) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4 text-center dark:bg-gray-950">
-        <h1 className="text-2xl font-bold text-gray-900 mb-3 dark:text-gray-100">No pudimos conectar con el servidor</h1>
-        <p className="text-gray-600 max-w-md mb-6 dark:text-gray-400">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-page p-4 text-center">
+        <h1 className="text-2xl font-bold text-ink mb-3">No pudimos conectar con el servidor</h1>
+        <p className="text-muted max-w-md mb-6">
           La API está alojada en un hosting gratuito que se suspende por inactividad y tarda en arrancar de nuevo. Inténtalo de nuevo en unos segundos.
         </p>
         <div className="flex flex-wrap justify-center gap-4">
           <button
             onClick={handleRetry}
-            className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+            className="px-6 py-2 bg-accent text-on-accent rounded-md hover:bg-accent-hover transition"
           >
             Reintentar
           </button>
-          <a href="/login" onClick={handleAdminLogin} className="px-6 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">
+          <a href="/login" onClick={handleAdminLogin} className="px-6 py-2 bg-surface-soft text-ink-soft rounded-md hover:bg-line transition">
             Ir al Panel de Administración
           </a>
         </div>
@@ -169,10 +169,10 @@ const PublicHome = () => {
 
   if (!profile) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4 text-center dark:bg-gray-950">
-        <h1 className="text-3xl font-bold text-gray-900 mb-4 dark:text-gray-100">Perfil no encontrado</h1>
-        <p className="text-gray-600 mb-6 dark:text-gray-400">Parece que aún no hay datos en la base de datos.</p>
-        <a href="/login" onClick={handleAdminLogin} className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-page p-4 text-center">
+        <h1 className="text-3xl font-bold text-ink mb-4">Perfil no encontrado</h1>
+        <p className="text-muted mb-6">Parece que aún no hay datos en la base de datos.</p>
+        <a href="/login" onClick={handleAdminLogin} className="px-6 py-2 bg-accent text-on-accent rounded-md hover:bg-accent-hover transition">
           Ir al Panel de Administración
         </a>
       </div>
@@ -180,18 +180,18 @@ const PublicHome = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 font-sans text-gray-900 selection:bg-blue-200 selection:text-blue-900 dark:bg-gray-950 dark:text-gray-100">
+    <div className="min-h-screen bg-page font-sans text-ink selection:bg-accent-soft selection:text-accent">
 
       {/* Navegación Superior */}
-      <nav className="fixed w-full bg-white/80 backdrop-blur-md z-50 border-b border-gray-100 transition-all dark:bg-gray-900/80 dark:border-gray-700">
+      <nav className="fixed w-full bg-surface/80 backdrop-blur-md z-50 border-b border-line transition-all">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <span className="text-xl font-bold bg-clip-text text-transparent bg-linear-to-r from-blue-600 to-indigo-600">
+          <span className="text-xl font-bold bg-clip-text text-transparent bg-linear-to-r from-accent to-accent-deep">
             {profile.firstName} {profile.lastName}
           </span>
-          <div className="hidden md:flex space-x-8 text-sm font-medium text-gray-600 dark:text-gray-300">
-            <a href="#about" className="hover:text-blue-600 transition dark:hover:text-blue-400">Sobre mí</a>
-            {experiences.length > 0 && <a href="#experience" className="hover:text-blue-600 transition dark:hover:text-blue-400">Experiencia</a>}
-            {projects.length > 0 && <a href="#projects" className="hover:text-blue-600 transition dark:hover:text-blue-400">Proyectos</a>}
+          <div className="hidden md:flex space-x-8 text-sm font-medium text-muted">
+            <a href="#about" className="hover:text-accent transition">Sobre mí</a>
+            {experiences.length > 0 && <a href="#experience" className="hover:text-accent transition">Experiencia</a>}
+            {projects.length > 0 && <a href="#projects" className="hover:text-accent transition">Proyectos</a>}
           </div>
           <div className="flex items-center gap-1 sm:gap-2">
             <a
@@ -199,7 +199,7 @@ const PublicHome = () => {
               onClick={handleAdminLogin}
               title="Admin Login"
               aria-label="Ir a Admin Login"
-              className="p-2 rounded-md text-blue-600 hover:bg-blue-50 transition dark:text-blue-400 dark:hover:bg-blue-500/10"
+              className="p-2 rounded-md text-accent hover:bg-accent-soft transition"
             >
               <LogIn className="h-5 w-5" />
             </a>
@@ -209,7 +209,7 @@ const PublicHome = () => {
                 onClick={handleTogglePortfolio}
                 title={showingDemo ? 'Ver CV principal' : 'Ver Demo'}
                 aria-label={showingDemo ? 'Ver CV principal' : 'Ver Demo'}
-                className="p-2 rounded-md text-emerald-600 hover:bg-emerald-50 transition dark:text-emerald-400 dark:hover:bg-emerald-500/10"
+                className="p-2 rounded-md text-success hover:bg-success-soft transition"
               >
                 <Sparkles className="h-5 w-5" />
               </a>
@@ -236,8 +236,8 @@ const PublicHome = () => {
       </main>
 
       {/* FOOTER */}
-      <footer className="bg-white border-t border-gray-200 py-8 dark:bg-gray-900 dark:border-gray-700">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-gray-500 dark:text-gray-400">
+      <footer className="bg-surface border-t border-line py-8">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-muted">
           <p>© {new Date().getFullYear()} {profile.firstName} {profile.lastName}. Todos los derechos reservados.</p>
           <p className="mt-2 text-xs">Desarrollado con React, Node.js & MongoDB.</p>
         </div>

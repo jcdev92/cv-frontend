@@ -25,19 +25,19 @@ const DashboardLayout = () => {
   ];
 
   return (
-    <div className="flex h-screen bg-gray-50 flex-col md:flex-row dark:bg-gray-950">
+    <div className="flex h-screen bg-page flex-col md:flex-row">
 
       {/* Header móvil */}
-      <div className="md:hidden flex items-center justify-between bg-white border-b border-gray-200 px-4 py-3 z-20 dark:bg-gray-900 dark:border-gray-700">
+      <div className="md:hidden flex items-center justify-between bg-surface border-b border-line px-4 py-3 z-20">
         <div className="flex items-center">
-          <LayoutDashboard className="h-6 w-6 text-blue-600 mr-2" />
-          <h1 className="text-lg font-extrabold tracking-wide text-gray-900 dark:text-gray-100">RESUMUP</h1>
+          <LayoutDashboard className="h-6 w-6 text-accent mr-2" />
+          <h1 className="text-lg font-extrabold tracking-wide text-ink">RESUMUP</h1>
         </div>
         <div className="flex items-center gap-1">
           <ThemeToggle />
           <button
             onClick={() => setIsMobileMenuOpen(true)}
-            className="text-gray-500 hover:text-gray-900 focus:outline-none dark:text-gray-400 dark:hover:text-gray-100"
+            className="text-muted hover:text-ink focus:outline-none"
           >
             <Menu className="h-6 w-6" />
           </button>
@@ -47,30 +47,24 @@ const DashboardLayout = () => {
       {/* Overlay oscuro para móvil */}
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-30 md:hidden"
+          className="fixed inset-0 bg-overlay z-30 md:hidden"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
 
       {/* Sidebar (fija en PC, deslizable en móvil) */}
-      <div className={`
-        fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-gray-200 flex flex-col
-        transform transition-transform duration-300 ease-in-out
-        md:relative md:translate-x-0
-        dark:bg-gray-900 dark:border-gray-700
-        ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
-      `}>
-        <div className="h-16 hidden md:flex items-center px-6 border-b border-gray-200 dark:border-gray-700">
-          <LayoutDashboard className="h-6 w-6 text-blue-600 mr-2 shrink-0" />
+      <div className={`fixed inset-y-0 left-0 z-40 w-64 bg-surface border-r border-line flex flex-col transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="h-16 hidden md:flex items-center px-6 border-b border-line">
+          <LayoutDashboard className="h-6 w-6 text-accent mr-2 shrink-0" />
           <div className="min-w-0 leading-tight">
-            <h1 className="text-lg font-extrabold tracking-wide text-gray-900 dark:text-gray-100">RESUMUP</h1>
-            <p className="text-[11px] font-medium text-gray-400 dark:text-gray-500 truncate">resume update</p>
+            <h1 className="text-lg font-extrabold tracking-wide text-ink">RESUMUP</h1>
+            <p className="text-[11px] font-medium text-faint truncate">resume update</p>
           </div>
         </div>
 
         {/* Botón cerrar en móvil */}
-        <div className="md:hidden flex items-center justify-end px-4 py-4 border-b border-gray-100 dark:border-gray-700">
-          <button onClick={() => setIsMobileMenuOpen(false)} className="text-gray-500 hover:text-red-500 dark:text-gray-400">
+        <div className="md:hidden flex items-center justify-end px-4 py-4 border-b border-line">
+          <button onClick={() => setIsMobileMenuOpen(false)} className="text-muted hover:text-danger">
             <X className="h-6 w-6" />
           </button>
         </div>
@@ -81,9 +75,9 @@ const DashboardLayout = () => {
               key={item.name}
               to={item.path}
               onClick={() => setIsMobileMenuOpen(false)} // Cerrar menú al hacer clic en móvil
-              className="flex items-center px-2 py-2.5 text-sm font-medium rounded-md text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-colors dark:text-gray-300 dark:hover:text-blue-400 dark:hover:bg-blue-500/10"
+              className="flex items-center px-2 py-2.5 text-sm font-medium rounded-md text-ink-soft hover:text-accent hover:bg-accent-soft transition-colors"
             >
-              <item.icon className="mr-3 h-5 w-5 text-gray-400 dark:text-gray-500" />
+              <item.icon className="mr-3 h-5 w-5 text-faint" />
               {item.name}
             </Link>
           ))}
@@ -93,17 +87,17 @@ const DashboardLayout = () => {
           <Link
             to={user?.email ? `/?user=${user.email}` : "/"}
             onClick={() => setIsMobileMenuOpen(false)}
-            className="flex items-center px-2 py-2.5 text-sm font-medium rounded-md text-blue-600 bg-blue-50 hover:bg-blue-100 transition-colors dark:text-blue-400 dark:bg-blue-500/10 dark:hover:bg-blue-500/20"
+            className="flex items-center px-2 py-2.5 text-sm font-medium rounded-md text-accent bg-accent-soft hover:bg-accent-soft transition-colors"
           >
             <Eye className="mr-3 h-5 w-5" />
             Ver Portafolio
           </Link>
         </div>
 
-        <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+        <div className="p-4 border-t border-line">
           <button
             onClick={logout}
-            className="flex items-center w-full px-2 py-2 text-sm font-medium text-red-600 rounded-md hover:bg-red-50 transition-colors dark:hover:bg-red-500/10"
+            className="flex items-center w-full px-2 py-2 text-sm font-medium text-danger rounded-md hover:bg-danger-soft transition-colors"
           >
             <LogOut className="mr-3 h-5 w-5" />
             Cerrar sesión
@@ -113,8 +107,8 @@ const DashboardLayout = () => {
 
       {/* Main Content */}
       <div className="flex-1 overflow-auto flex flex-col relative z-0">
-        <header className="hidden md:flex h-16 bg-white border-b border-gray-200 items-center px-8 shrink-0 dark:bg-gray-900 dark:border-gray-700">
-          <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">Panel de Control</h2>
+        <header className="hidden md:flex h-16 bg-surface border-b border-line items-center px-8 shrink-0">
+          <h2 className="text-xl font-semibold text-ink-soft">Panel de Control</h2>
           <div className="ml-auto">
             <ThemeToggle />
           </div>

@@ -58,9 +58,9 @@ const SkillDashboard = () => {
 
   if (isFormOpen) {
     return (
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 max-w-2xl dark:bg-gray-900 dark:border-gray-700">
+      <div className="bg-surface p-6 rounded-xl shadow-sm border border-line max-w-2xl">
         <BackButton onClick={closeForm} label="Volver" />
-        <h3 className="text-xl font-bold text-gray-900 mb-6 dark:text-gray-100">{editingId ? 'Editar Habilidad' : 'Nueva Habilidad'}</h3>
+        <h3 className="text-xl font-bold text-ink mb-6">{editingId ? 'Editar Habilidad' : 'Nueva Habilidad'}</h3>
         {error && <ErrorBanner message={error} onDismiss={clearError} />}
         <form onSubmit={handleSubmit} className="space-y-6">
           <Input label="Nombre de la Herramienta/Habilidad" name="name" required value={formData.name} onChange={handleChange} placeholder="Ej: React, Figma, Liderazgo..." />
@@ -71,7 +71,7 @@ const SkillDashboard = () => {
             ))}
           </Select>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
+            <label className="block text-sm font-medium text-ink-soft mb-1">
               Nivel de dominio ({formData.proficiency}%)
             </label>
             <input
@@ -80,7 +80,7 @@ const SkillDashboard = () => {
               min="0" max="100" step="5"
               value={formData.proficiency}
               onChange={(e) => setFormData((prev) => ({ ...prev, proficiency: Number(e.target.value) }))}
-              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+              className="w-full h-2 bg-surface-soft rounded-lg appearance-none cursor-pointer accent-accent"
             />
           </div>
           <FormActions onCancel={closeForm} saving={saving} />
@@ -110,27 +110,27 @@ const SkillDashboard = () => {
       ) : (
         <div className="space-y-8">
           {Object.entries(groupedSkills).map(([category, catSkills]) => (
-            <div key={category} className="bg-white border border-gray-100 p-5 rounded-xl shadow-sm dark:bg-gray-900 dark:border-gray-700">
-              <h4 className="text-md font-bold text-gray-900 mb-4 border-b border-gray-100 pb-2 dark:text-gray-100 dark:border-gray-700">
+            <div key={category} className="bg-surface border border-line p-5 rounded-xl shadow-sm">
+              <h4 className="text-md font-bold text-ink mb-4 border-b border-line pb-2">
                 {category}
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 {catSkills.map((skill) => (
-                  <div key={skill._id} className="group relative flex flex-col p-3 rounded-lg border border-gray-100 hover:border-blue-200 bg-gray-50 hover:bg-white transition dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-800/80 dark:hover:border-blue-500/40">
+                  <div key={skill._id} className="group relative flex flex-col p-3 rounded-lg border border-line hover:border-accent bg-surface-soft hover:bg-surface transition">
                     <div className="flex justify-between items-start mb-2">
-                      <span className="font-medium text-gray-900 dark:text-gray-100">{skill.name}</span>
-                      <div className="opacity-0 group-hover:opacity-100 transition-opacity flex space-x-1 absolute right-2 top-2 bg-white/80 rounded p-1 dark:bg-gray-900/80">
-                        <IconButton onClick={() => handleEdit(skill)} className="p-1 text-gray-400 hover:text-blue-600">
+                      <span className="font-medium text-ink">{skill.name}</span>
+                      <div className="opacity-0 group-hover:opacity-100 transition-opacity flex space-x-1 absolute right-2 top-2 bg-surface/80 rounded p-1">
+                        <IconButton onClick={() => handleEdit(skill)} className="p-1 text-faint hover:text-accent">
                           <Edit2 className="h-3 w-3" />
                         </IconButton>
-                        <IconButton onClick={() => remove(skill._id)} className="p-1 text-gray-400 hover:text-red-600">
+                        <IconButton onClick={() => remove(skill._id)} className="p-1 text-faint hover:text-danger">
                           <Trash2 className="h-3 w-3" />
                         </IconButton>
                       </div>
                     </div>
                     {skill.proficiency && (
-                      <div className="w-full bg-gray-200 rounded-full h-1.5 mt-auto">
-                        <div className="bg-blue-600 h-1.5 rounded-full" style={{ width: `${skill.proficiency}%` }}></div>
+                      <div className="w-full bg-surface-soft rounded-full h-1.5 mt-auto">
+                        <div className="bg-accent h-1.5 rounded-full" style={{ width: `${skill.proficiency}%` }}></div>
                       </div>
                     )}
                   </div>

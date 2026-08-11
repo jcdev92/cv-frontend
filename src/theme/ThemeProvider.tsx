@@ -9,12 +9,19 @@ function systemTheme(): 'light' | 'dark' {
 
 function getInitialTheme(): ThemeMode {
   const stored = localStorage.getItem(STORAGE_KEY);
-  return stored === 'light' || stored === 'dark' || stored === 'system' ? stored : 'system';
+  return stored === 'light' || stored === 'dark' || stored === 'system' || stored === 'hacker' ? stored : 'system';
 }
 
 function applyTheme(mode: ThemeMode) {
   const root = document.documentElement;
+  if (mode === 'hacker') {
+    root.dataset.theme = 'hacker';
+    root.classList.add('dark');
+    root.style.colorScheme = 'dark';
+    return;
+  }
   const effective = mode === 'system' ? systemTheme() : mode;
+  root.dataset.theme = effective;
   root.classList.toggle('dark', effective === 'dark');
   root.style.colorScheme = effective;
 }
@@ -40,7 +47,9 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const cycleTheme = useCallback(() => {
-    setTheme(theme === 'light' ? 'dark' : theme === 'dark' ? 'system' : 'light');
+    const order: ThemeMode[] = ['light', 'dark', 'system', 'hacker'];
+    const idx = order.indexOf(theme);
+    setTheme(order[(idx + 1) % order.length]);
   }, [theme, setTheme]);
 
   return (

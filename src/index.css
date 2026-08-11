@@ -2,11 +2,157 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* ============================================================
+   DESIGN TOKENS (RESUMUP)
+   Cada token semántico se resuelve en runtime desde variables
+   que cambian según el tema activo en <html data-theme="...">.
+   ============================================================ */
+@theme {
+  --color-page: var(--rs-page);
+  --color-surface: var(--rs-surface);
+  --color-surface-soft: var(--rs-surface-soft);
+  --color-field: var(--rs-field);
+  --color-ink: var(--rs-ink);
+  --color-ink-soft: var(--rs-ink-soft);
+  --color-muted: var(--rs-muted);
+  --color-faint: var(--rs-faint);
+  --color-line: var(--rs-line);
+  --color-line-strong: var(--rs-line-strong);
+  --color-accent: var(--rs-accent);
+  --color-accent-hover: var(--rs-accent-hover);
+  --color-accent-soft: var(--rs-accent-soft);
+  --color-accent-line: var(--rs-accent-line);
+  --color-danger: var(--rs-danger);
+  --color-danger-hover: var(--rs-danger-hover);
+  --color-danger-soft: var(--rs-danger-soft);
+  --color-danger-line: var(--rs-danger-line);
+  --color-success: var(--rs-success);
+  --color-success-soft: var(--rs-success-soft);
+  --color-success-line: var(--rs-success-line);
+  --color-warning: var(--rs-warning);
+  --color-warning-soft: var(--rs-warning-soft);
+  --color-warning-line: var(--rs-warning-line);
+  --color-inverse: var(--rs-inverse);
+  --color-on-inverse: var(--rs-on-inverse);
+  --color-raised: var(--rs-raised);
+  --color-overlay: var(--rs-overlay);
+  --color-accent-deep: var(--rs-accent-deep);
+
+  --font-sans: var(--rs-font-sans);
+}
+
+/* ---------- Tema claro (por defecto) ---------- */
+:root,
+[data-theme="light"] {
+  --rs-page: #f9fafb;
+  --rs-surface: #ffffff;
+  --rs-surface-soft: #f3f4f6;
+  --rs-field: #ffffff;
+  --rs-ink: #111827;
+  --rs-ink-soft: #374151;
+  --rs-muted: #6b7280;
+  --rs-faint: #9ca3af;
+  --rs-line: #e5e7eb;
+  --rs-line-strong: #d1d5db;
+  --rs-accent: #2563eb;
+  --rs-accent-hover: #1d4ed8;
+  --rs-accent-soft: #eff6ff;
+  --rs-accent-line: #bfdbfe;
+  --rs-danger: #dc2626;
+  --rs-danger-hover: #b91c1c;
+  --rs-danger-soft: #fef2f2;
+  --rs-danger-line: #fecaca;
+  --rs-success: #16a34a;
+  --rs-success-soft: #f0fdf4;
+  --rs-success-line: #bbf7d0;
+  --rs-warning: #d97706;
+  --rs-warning-soft: #fffbeb;
+  --rs-warning-line: #fde68a;
+  --rs-inverse: #111827;
+  --rs-on-inverse: #ffffff;
+  --rs-raised: #ffffff;
+  --rs-overlay: rgb(0 0 0 / 0.5);
+  --rs-accent-deep: #4f46e5;
+  --rs-font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ---------- Tema oscuro ---------- */
+[data-theme="dark"] {
+  --rs-page: #030712;
+  --rs-surface: #111827;
+  --rs-surface-soft: #1f2937;
+  --rs-field: #1f2937;
+  --rs-ink: #f3f4f6;
+  --rs-ink-soft: #d1d5db;
+  --rs-muted: #9ca3af;
+  --rs-faint: #6b7280;
+  --rs-line: #374151;
+  --rs-line-strong: #4b5563;
+  --rs-accent: #60a5fa;
+  --rs-accent-hover: #3b82f6;
+  --rs-accent-soft: rgb(59 130 246 / 0.1);
+  --rs-accent-line: rgb(59 130 246 / 0.2);
+  --rs-danger: #f87171;
+  --rs-danger-hover: #fca5a5;
+  --rs-danger-soft: rgb(239 68 68 / 0.1);
+  --rs-danger-line: rgb(239 68 68 / 0.2);
+  --rs-success: #4ade80;
+  --rs-success-soft: rgb(34 197 94 / 0.1);
+  --rs-success-line: rgb(34 197 94 / 0.2);
+  --rs-warning: #fde68a;
+  --rs-warning-soft: rgb(217 119 6 / 0.2);
+  --rs-warning-line: rgb(120 53 15 / 0.5);
+  --rs-inverse: #f3f4f6;
+  --rs-on-inverse: #111827;
+  --rs-raised: #111827;
+  --rs-overlay: rgb(0 0 0 / 0.6);
+  --rs-accent-deep: #818cf8;
+  --rs-font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ---------- Tema HACKER (terminal verde) ---------- */
+[data-theme="hacker"] {
+  --rs-page: #050a05;
+  --rs-surface: #0a120a;
+  --rs-surface-soft: #0f1a0f;
+  --rs-field: #071207;
+  --rs-ink: #c8ffd0;
+  --rs-ink-soft: #8dffa3;
+  --rs-muted: #5aa36b;
+  --rs-faint: #3c6b49;
+  --rs-line: #173a22;
+  --rs-line-strong: #225537;
+  --rs-accent: #00ff66;
+  --rs-accent-hover: #33ff8a;
+  --rs-accent-soft: rgb(0 255 102 / 0.08);
+  --rs-accent-line: rgb(0 255 102 / 0.25);
+  --rs-danger: #ff5f56;
+  --rs-danger-hover: #ff857e;
+  --rs-danger-soft: rgb(255 95 86 / 0.08);
+  --rs-danger-line: rgb(255 95 86 / 0.25);
+  --rs-success: #00ff66;
+  --rs-success-soft: rgb(0 255 102 / 0.08);
+  --rs-success-line: rgb(0 255 102 / 0.25);
+  --rs-warning: #ffd166;
+  --rs-warning-soft: rgb(255 209 102 / 0.1);
+  --rs-warning-line: rgb(255 209 102 / 0.3);
+  --rs-inverse: #00ff66;
+  --rs-on-inverse: #020603;
+  --rs-raised: #0f1a0f;
+  --rs-overlay: rgb(0 0 0 / 0.75);
+  --rs-accent-deep: #39ff14;
+  --rs-font-sans: "JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
 html {
   color-scheme: light;
 }
 
-html.dark {
+[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+[data-theme="hacker"] {
   color-scheme: dark;
 }
 

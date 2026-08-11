@@ -3,5 +3,5 @@ interface SkeletonBlockProps {
 }
 
 export const SkeletonBlock = ({ className }: SkeletonBlockProps) => (
-  <div className={`animate-pulse rounded-lg bg-gray-200 dark:bg-gray-800 ${className}`} />
+  <div className={`animate-pulse rounded-lg bg-surface-soft ${className}`} />
 );

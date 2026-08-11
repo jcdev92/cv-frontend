@@ -9,8 +9,8 @@ interface SectionHeaderProps {
 export const SectionHeader = ({ title, subtitle, action }: SectionHeaderProps) => (
   <div className="flex justify-between items-center">
     <div>
-      <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{title}</h3>
-      {subtitle && <p className="text-gray-500 text-sm dark:text-gray-400">{subtitle}</p>}
+      <h3 className="text-xl font-bold text-ink">{title}</h3>
+      {subtitle && <p className="text-muted text-sm">{subtitle}</p>}
     </div>
     {action}
   </div>

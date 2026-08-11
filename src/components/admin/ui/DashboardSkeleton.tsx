@@ -17,7 +17,7 @@ const HeaderSkeleton = () => (
 );
 
 const ListItemSkeleton = () => (
-  <div className="bg-white border border-gray-100 p-5 rounded-xl shadow-sm dark:bg-gray-900 dark:border-gray-700">
+  <div className="bg-surface border border-line p-5 rounded-xl shadow-sm">
     <div className="flex justify-between items-start">
       <div className="space-y-2 flex-1">
         <SkeletonBlock className="h-5 w-2/5" />
@@ -36,7 +36,7 @@ const ListItemSkeleton = () => (
 );
 
 const GridItemSkeleton = () => (
-  <div className="bg-white border border-gray-100 rounded-xl shadow-sm overflow-hidden dark:bg-gray-900 dark:border-gray-700">
+  <div className="bg-surface border border-line rounded-xl shadow-sm overflow-hidden">
     <SkeletonBlock className="h-40 w-full rounded-none" />
     <div className="p-5 space-y-3">
       <div className="flex justify-between items-start">
@@ -51,7 +51,7 @@ const GridItemSkeleton = () => (
 );
 
 const FormSkeleton = () => (
-  <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 dark:bg-gray-900 dark:border-gray-700">
+  <div className="bg-surface p-6 rounded-xl shadow-sm border border-line">
     <div className="space-y-2 mb-6">
       <SkeletonBlock className="h-7 w-48" />
       <SkeletonBlock className="h-4 w-80" />

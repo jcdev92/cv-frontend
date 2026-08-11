@@ -6,8 +6,8 @@ interface PortfolioSkeletonProps {
 
 const PortfolioSkeleton = ({ showColdStartMessage }: PortfolioSkeletonProps) => {
   return (
-    <div className="min-h-screen bg-gray-50 font-sans dark:bg-gray-950">
-      <nav className="fixed w-full bg-white/80 backdrop-blur-md z-50 border-b border-gray-100 dark:bg-gray-900/80 dark:border-gray-700">
+    <div className="min-h-screen bg-page font-sans">
+      <nav className="fixed w-full bg-surface/80 backdrop-blur-md z-50 border-b border-line">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <SkeletonBlock className="h-6 w-48" />
           <div className="hidden md:flex space-x-8">
@@ -22,7 +22,7 @@ const PortfolioSkeleton = ({ showColdStartMessage }: PortfolioSkeletonProps) => 
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           {showColdStartMessage && <ColdStartBanner />}
 
-          <div className="py-12 md:py-20 flex flex-col-reverse md:flex-row items-center md:justify-between gap-10 border-b border-gray-200 dark:border-gray-700">
+          <div className="py-12 md:py-20 flex flex-col-reverse md:flex-row items-center md:justify-between gap-10 border-b border-line">
             <div className="flex-1 w-full">
               <SkeletonBlock className="h-10 w-3/4 mb-4" />
               <SkeletonBlock className="h-6 w-1/2 mb-6" />

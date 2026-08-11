@@ -68,9 +68,9 @@ const EducationDashboard = () => {
 
   if (isFormOpen) {
     return (
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 dark:bg-gray-900 dark:border-gray-700">
+      <div className="bg-surface p-6 rounded-xl shadow-sm border border-line">
         <BackButton onClick={closeForm} />
-        <h3 className="text-xl font-bold text-gray-900 mb-6 dark:text-gray-100">{editingId ? 'Editar Educación' : 'Nueva Educación'}</h3>
+        <h3 className="text-xl font-bold text-ink mb-6">{editingId ? 'Editar Educación' : 'Nueva Educación'}</h3>
         {error && <ErrorBanner message={error} onDismiss={clearError} />}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -111,29 +111,29 @@ const EducationDashboard = () => {
       ) : (
         <div className="space-y-4">
           {items.map((edu) => (
-            <div key={edu._id} className="bg-white border border-gray-100 p-5 rounded-xl shadow-sm hover:shadow-md transition dark:bg-gray-900 dark:border-gray-700">
+            <div key={edu._id} className="bg-surface border border-line p-5 rounded-xl shadow-sm hover:shadow-md transition">
               <div className="flex justify-between items-start">
                 <div>
-                  <h4 className="text-lg font-bold text-gray-900 dark:text-gray-100">{edu.degree}</h4>
-                  <div className="flex flex-wrap items-center text-sm text-gray-600 mt-1 gap-4 dark:text-gray-400">
-                    <span className="flex items-center"><Building2 className="h-4 w-4 mr-1 text-gray-400 dark:text-gray-500" /> {edu.institution}</span>
-                    {edu.location && <span className="flex items-center"><MapPin className="h-4 w-4 mr-1 text-gray-400 dark:text-gray-500" /> {edu.location}</span>}
+                  <h4 className="text-lg font-bold text-ink">{edu.degree}</h4>
+                  <div className="flex flex-wrap items-center text-sm text-muted mt-1 gap-4">
+                    <span className="flex items-center"><Building2 className="h-4 w-4 mr-1 text-faint" /> {edu.institution}</span>
+                    {edu.location && <span className="flex items-center"><MapPin className="h-4 w-4 mr-1 text-faint" /> {edu.location}</span>}
                     <span className="flex items-center">
-                      <Calendar className="h-4 w-4 mr-1 text-gray-400 dark:text-gray-500" />
+                      <Calendar className="h-4 w-4 mr-1 text-faint" />
                       {new Date(edu.startDate).toLocaleDateString()} - {edu.isCurrent ? 'Actualidad' : (edu.endDate ? new Date(edu.endDate).toLocaleDateString() : 'N/A')}
                     </span>
                   </div>
                 </div>
                 <div className="flex space-x-2">
-                  <IconButton title="Editar" onClick={() => handleEdit(edu)} className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50">
+                  <IconButton title="Editar" onClick={() => handleEdit(edu)} className="p-2 text-faint hover:text-accent hover:bg-accent-soft">
                     <Edit2 className="h-4 w-4" />
                   </IconButton>
-                  <IconButton title="Eliminar" onClick={() => remove(edu._id)} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50">
+                  <IconButton title="Eliminar" onClick={() => remove(edu._id)} className="p-2 text-faint hover:text-danger hover:bg-danger-soft">
                     <Trash2 className="h-4 w-4" />
                   </IconButton>
                 </div>
               </div>
-              {edu.description && <p className="text-gray-700 mt-4 text-sm dark:text-gray-300">{edu.description}</p>}
+              {edu.description && <p className="text-ink-soft mt-4 text-sm">{edu.description}</p>}
             </div>
           ))}
         </div>

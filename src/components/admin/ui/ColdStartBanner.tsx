@@ -1,7 +1,7 @@
 import { Cloud } from 'lucide-react';
 
 export const ColdStartBanner = () => (
-  <div className="mb-6 flex items-start justify-between gap-4 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800 dark:border-amber-900/50 dark:bg-amber-900/20 dark:text-amber-200">
+  <div className="mb-6 flex items-start justify-between gap-4 rounded-lg border border-warning-soft bg-warning-soft p-4 text-sm text-warning">
     <div className="flex items-start gap-3">
       <Cloud className="mt-0.5 h-5 w-5 shrink-0" />
       <div>
@@ -11,6 +11,6 @@ export const ColdStartBanner = () => (
         </p>
       </div>
     </div>
-    <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-amber-600 border-t-transparent dark:border-amber-300" />
+    <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-warning border-t-transparent" />
   </div>
 );

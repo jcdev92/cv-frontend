@@ -83,9 +83,9 @@ const ProjectDashboard = () => {
 
   if (isFormOpen) {
     return (
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 dark:bg-gray-900 dark:border-gray-700">
+      <div className="bg-surface p-6 rounded-xl shadow-sm border border-line">
         <BackButton onClick={closeForm} />
-        <h3 className="text-xl font-bold text-gray-900 mb-6 dark:text-gray-100">{editingId ? 'Editar Proyecto' : 'Nuevo Proyecto'}</h3>
+        <h3 className="text-xl font-bold text-ink mb-6">{editingId ? 'Editar Proyecto' : 'Nuevo Proyecto'}</h3>
         {error && <ErrorBanner message={error} onDismiss={clearError} />}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -146,61 +146,61 @@ const ProjectDashboard = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {projects.map((proj) => (
-            <div key={proj._id} className="bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition overflow-hidden flex flex-col dark:bg-gray-900 dark:border-gray-700">
+            <div key={proj._id} className="bg-surface border border-line rounded-xl shadow-sm hover:shadow-md transition overflow-hidden flex flex-col">
               {proj.imageUrl ? (
                 <div className="h-40 w-full overflow-hidden">
                   <img src={proj.imageUrl} alt={proj.title} className="w-full h-full object-cover" />
                 </div>
               ) : (
-                <div className="h-40 w-full bg-gray-100 flex items-center justify-center text-gray-400 dark:bg-gray-800 dark:text-gray-500">
+                <div className="h-40 w-full bg-surface-soft flex items-center justify-center text-faint">
                   <ImageIcon className="h-10 w-10 opacity-50" />
                 </div>
               )}
 
               <div className="p-5 flex-1 flex flex-col">
                 <div className="flex justify-between items-start mb-2">
-                  <h4 className="text-lg font-bold text-gray-900 line-clamp-1 dark:text-gray-100">{proj.title}</h4>
+                  <h4 className="text-lg font-bold text-ink line-clamp-1">{proj.title}</h4>
                   <div className="flex space-x-1 ml-2">
-                    <IconButton title="Editar" onClick={() => handleEdit(proj)} className="p-1 text-gray-400 hover:text-blue-600">
+                    <IconButton title="Editar" onClick={() => handleEdit(proj)} className="p-1 text-faint hover:text-accent">
                       <Edit2 className="h-4 w-4" />
                     </IconButton>
-                    <IconButton title="Eliminar" onClick={() => remove(proj._id)} className="p-1 text-gray-400 hover:text-red-600">
+                    <IconButton title="Eliminar" onClick={() => remove(proj._id)} className="p-1 text-faint hover:text-danger">
                       <Trash2 className="h-4 w-4" />
                     </IconButton>
                   </div>
                 </div>
 
-                <p className="text-gray-600 text-sm mb-4 line-clamp-3 flex-1 dark:text-gray-400">{proj.description}</p>
+                <p className="text-muted text-sm mb-4 line-clamp-3 flex-1">{proj.description}</p>
 
                 {proj.technologies && proj.technologies.length > 0 && (
                   <div className="flex flex-wrap gap-1.5 mb-4">
                     {proj.technologies.slice(0, 4).map((tech, i) => (
-                      <span key={i} className="px-2 py-0.5 bg-blue-50 text-blue-700 text-xs font-medium rounded border border-blue-100 dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-500/20">
+                      <span key={i} className="px-2 py-0.5 bg-accent-soft text-accent text-xs font-medium rounded border border-accent-soft">
                         {tech}
                       </span>
                     ))}
-                    {proj.technologies.length > 4 && <span className="text-xs text-gray-500 dark:text-gray-400">+{proj.technologies.length - 4}</span>}
+                    {proj.technologies.length > 4 && <span className="text-xs text-muted">+{proj.technologies.length - 4}</span>}
                   </div>
                 )}
 
-                <div className="pt-4 border-t border-gray-100 flex space-x-4 dark:border-gray-700">
+                <div className="pt-4 border-t border-line flex space-x-4">
                   {proj.repoUrl && (
-                    <a href={proj.repoUrl} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100">
+                    <a href={proj.repoUrl} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm text-muted hover:text-ink">
                       <Github className="h-4 w-4 mr-1.5" /> Código
                     </a>
                   )}
                   {proj.frontendRepoUrl && (
-                    <a href={proj.frontendRepoUrl} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100">
+                    <a href={proj.frontendRepoUrl} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm text-muted hover:text-ink">
                       <Github className="h-4 w-4 mr-1.5" /> Frontend
                     </a>
                   )}
                   {proj.backendRepoUrl && (
-                    <a href={proj.backendRepoUrl} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100">
+                    <a href={proj.backendRepoUrl} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm text-muted hover:text-ink">
                       <Github className="h-4 w-4 mr-1.5" /> Backend
                     </a>
                   )}
                   {proj.liveUrl && (
-                    <a href={proj.liveUrl} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm text-blue-600 hover:text-blue-800">
+                    <a href={proj.liveUrl} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm text-accent hover:text-accent">
                       <ExternalLink className="h-4 w-4 mr-1.5" /> Demo
                     </a>
                   )}

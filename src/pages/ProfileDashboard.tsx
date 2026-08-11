@@ -120,14 +120,14 @@ const ProfileForm = ({ initial, isError, onRetry }: ProfileFormProps) => {
   };
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 dark:bg-gray-900 dark:border-gray-700">
+    <div className="bg-surface p-6 rounded-xl shadow-sm border border-line">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">Editar Perfil</h3>
-          <p className="text-gray-500 text-sm dark:text-gray-400">Actualiza tu información personal y profesional básica.</p>
+          <h3 className="text-xl font-bold text-ink">Editar Perfil</h3>
+          <p className="text-muted text-sm">Actualiza tu información personal y profesional básica.</p>
         </div>
         {message.text && (
-          <span className={`px-4 py-2 rounded-md text-sm font-medium ${message.type === 'success' ? 'bg-green-50 text-green-700 dark:bg-green-500/10 dark:text-green-400' : 'bg-red-50 text-red-700 dark:bg-red-500/10 dark:text-red-400'}`}>
+          <span className={`px-4 py-2 rounded-md text-sm font-medium ${message.type === 'success' ? 'bg-success-soft text-success' : 'bg-danger-soft text-danger'}`}>
             {message.text}
           </span>
         )}
@@ -139,7 +139,7 @@ const ProfileForm = ({ initial, isError, onRetry }: ProfileFormProps) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Datos Personales */}
           <div className="space-y-4">
-            <h4 className="text-sm font-semibold text-gray-900 uppercase tracking-wider border-b pb-2 dark:text-gray-100 dark:border-gray-700">Datos Personales</h4>
+            <h4 className="text-sm font-semibold text-ink uppercase tracking-wider border-b pb-2 border-line">Datos Personales</h4>
             <div className="grid grid-cols-2 gap-4">
               <Input label="Nombre" name="firstName" value={formData.firstName} onChange={handleChange} required />
               <Input label="Apellidos" name="lastName" value={formData.lastName} onChange={handleChange} required />
@@ -157,7 +157,7 @@ const ProfileForm = ({ initial, isError, onRetry }: ProfileFormProps) => {
 
           {/* Enlaces y URLs */}
           <div className="space-y-4">
-            <h4 className="text-sm font-semibold text-gray-900 uppercase tracking-wider border-b pb-2 dark:text-gray-100 dark:border-gray-700">Enlaces y URLs</h4>
+            <h4 className="text-sm font-semibold text-ink uppercase tracking-wider border-b pb-2 border-line">Enlaces y URLs</h4>
 
             <Input label="URL Foto de Perfil (Avatar)" type="url" name="avatarUrl" value={formData.avatarUrl} onChange={handleChange} />
 
@@ -173,7 +173,7 @@ const ProfileForm = ({ initial, isError, onRetry }: ProfileFormProps) => {
         </div>
 
         {/* Resumen / Sobre mí */}
-        <div className="pt-4 border-t border-gray-100 dark:border-gray-700">
+        <div className="pt-4 border-t border-line">
           <Textarea
             label="Sobre Mí (Resumen Profesional)"
             name="summary"
