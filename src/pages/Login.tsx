@@ -3,19 +3,22 @@ import { useNavigate } from 'react-router-dom';
 import { isAxiosError } from 'axios';
 import api from '../api/axios';
 import { useAuthStore } from '../store/authStore';
-import { Briefcase } from 'lucide-react';
+import { Briefcase, Loader2 } from 'lucide-react';
 import { ThemeToggle } from '../components/ThemeToggle';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const login = useAuthStore((state) => state.login);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (loading) return;
     setError('');
+    setLoading(true);
 
     try {
       const response = await api.post('/auth/login', { email, password });
@@ -27,15 +30,18 @@ const Login = () => {
       } else {
         setError('Error al iniciar sesión');
       }
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleDemoLogin = async () => {
     const demoEmail = import.meta.env.VITE_DEMO_EMAIL;
     const demoPassword = import.meta.env.VITE_DEMO_PASSWORD;
-    if (!demoEmail || !demoPassword) return;
+    if (!demoEmail || !demoPassword || loading) return;
 
     setError('');
+    setLoading(true);
     try {
       const response = await api.post('/auth/login', {
         email: demoEmail,
@@ -49,6 +55,8 @@ const Login = () => {
       } else {
         setError('Error al iniciar sesión demo');
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -62,11 +70,11 @@ const Login = () => {
           <div className="h-12 w-12 bg-blue-600 rounded-lg flex items-center justify-center mb-4 shadow-md">
              <Briefcase className="text-white h-6 w-6" />
           </div>
-          <h2 className="text-center text-3xl font-extrabold text-gray-900 dark:text-gray-100">
-            resumup
+          <h2 className="text-center text-3xl font-extrabold tracking-wide text-gray-900 dark:text-gray-100">
+            RESUMUP
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
-            Inicia sesión para mantener tu CV y tu portafolio actualizado
+          <p className="mt-1 text-center text-sm font-medium text-gray-500 dark:text-gray-400">
+            resume update · mantén tu CV y tu portafolio actualizado
           </p>
         </div>
 
@@ -87,6 +95,7 @@ const Login = () => {
                 placeholder="tu@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                disabled={loading}
               />
             </div>
             <div>
@@ -98,6 +107,7 @@ const Login = () => {
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                disabled={loading}
               />
             </div>
           </div>
@@ -105,9 +115,17 @@ const Login = () => {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors dark:focus:ring-offset-gray-900"
+              disabled={loading}
+              className="group relative w-full flex justify-center items-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors disabled:opacity-60 disabled:cursor-not-allowed dark:focus:ring-offset-gray-900"
             >
-              Ingresar
+              {loading ? (
+                <>
+                  <Loader2 className="animate-spin h-4 w-4 mr-2" />
+                  Iniciando sesión...
+                </>
+              ) : (
+                'Ingresar'
+              )}
             </button>
           </div>
 
@@ -116,9 +134,17 @@ const Login = () => {
               <button
                 type="button"
                 onClick={handleDemoLogin}
-                className="group relative w-full flex justify-center py-2.5 px-4 border border-blue-200 text-sm font-medium rounded-md text-blue-600 bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors dark:border-blue-500/30 dark:text-blue-400 dark:bg-blue-500/10 dark:hover:bg-blue-500/20 dark:focus:ring-offset-gray-900"
+                disabled={loading}
+                className="group relative w-full flex justify-center items-center py-2.5 px-4 border border-blue-200 text-sm font-medium rounded-md text-blue-600 bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors disabled:opacity-60 disabled:cursor-not-allowed dark:border-blue-500/30 dark:text-blue-400 dark:bg-blue-500/10 dark:hover:bg-blue-500/20 dark:focus:ring-offset-gray-900"
               >
-                Entrar como invitado (Demo)
+                {loading ? (
+                  <>
+                    <Loader2 className="animate-spin h-4 w-4 mr-2" />
+                    Iniciando sesión...
+                  </>
+                ) : (
+                  'Entrar como invitado (Demo)'
+                )}
               </button>
               <p className="mt-2 text-center text-xs text-gray-500 dark:text-gray-400">
                 {import.meta.env.VITE_DEMO_EMAIL} · prueba el panel y edita libremente

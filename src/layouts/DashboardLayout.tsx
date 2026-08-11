@@ -31,7 +31,7 @@ const DashboardLayout = () => {
       <div className="md:hidden flex items-center justify-between bg-white border-b border-gray-200 px-4 py-3 z-20 dark:bg-gray-900 dark:border-gray-700">
         <div className="flex items-center">
           <LayoutDashboard className="h-6 w-6 text-blue-600 mr-2" />
-          <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">Dashboard</h1>
+          <h1 className="text-lg font-extrabold tracking-wide text-gray-900 dark:text-gray-100">RESUMUP</h1>
         </div>
         <div className="flex items-center gap-1">
           <ThemeToggle />
@@ -61,8 +61,11 @@ const DashboardLayout = () => {
         ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <div className="h-16 hidden md:flex items-center px-6 border-b border-gray-200 dark:border-gray-700">
-          <LayoutDashboard className="h-6 w-6 text-blue-600 mr-2" />
-          <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">resumup</h1>
+          <LayoutDashboard className="h-6 w-6 text-blue-600 mr-2 shrink-0" />
+          <div className="min-w-0 leading-tight">
+            <h1 className="text-lg font-extrabold tracking-wide text-gray-900 dark:text-gray-100">RESUMUP</h1>
+            <p className="text-[11px] font-medium text-gray-400 dark:text-gray-500 truncate">resume update</p>
+          </div>
         </div>
 
         {/* Botón cerrar en móvil */}
