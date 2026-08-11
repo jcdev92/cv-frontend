@@ -63,10 +63,10 @@ const Login = () => {
              <Briefcase className="text-white h-6 w-6" />
           </div>
           <h2 className="text-center text-3xl font-extrabold text-gray-900 dark:text-gray-100">
-            Panel de CV
+            resumup
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
-            Inicia sesión para gestionar tu portafolio
+            Inicia sesión para mantener tu CV y tu portafolio actualizado
           </p>
         </div>
 

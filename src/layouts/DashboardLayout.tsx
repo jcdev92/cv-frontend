@@ -62,7 +62,7 @@ const DashboardLayout = () => {
       `}>
         <div className="h-16 hidden md:flex items-center px-6 border-b border-gray-200 dark:border-gray-700">
           <LayoutDashboard className="h-6 w-6 text-blue-600 mr-2" />
-          <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">Portfolio Manager</h1>
+          <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">resumup</h1>
         </div>
 
         {/* Botón cerrar en móvil */}
