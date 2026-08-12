@@ -17,6 +17,7 @@ import { useLanguage } from '../i18n/languageContext';
 import { LogIn, Sparkles, Menu, X } from 'lucide-react';
 import { generateCvPdf } from '../utils/generateCvPdf';
 import { useColdStart } from '../hooks/useColdStart';
+import { shortName } from '../utils/shortName';
 
 const REQUEST_TIMEOUT_MS = 30000;
 const AUTO_RETRY_COUNT = 2;
@@ -190,7 +191,8 @@ const PublicHome = () => {
       <nav className="fixed w-full bg-surface/80 backdrop-blur-md z-50 border-b border-line transition-all">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <span className="text-xl font-bold bg-clip-text text-transparent bg-linear-to-r from-accent to-accent-deep">
-            {profile.firstName} {profile.lastName}
+            <span className="sm:inline hidden" title={`${profile.firstName} ${profile.lastName}`}>{profile.firstName} {profile.lastName}</span>
+            <span className="sm:hidden">{shortName(profile)}</span>
           </span>
           <div className="hidden md:flex space-x-8 text-sm font-medium text-muted">
             <a href="#about" className="hover:text-accent transition">{t.nav.about}</a>
