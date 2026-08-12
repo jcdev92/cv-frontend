@@ -1,5 +1,6 @@
 import { Github, Linkedin, Twitter, Globe, MapPin, Download, Mail } from 'lucide-react';
 import type { Profile } from '../../types/cv';
+import { useLanguage } from '../../i18n/languageContext';
 
 interface HeroSectionProps {
   profile: Profile;
@@ -7,11 +8,13 @@ interface HeroSectionProps {
 }
 
 const HeroSection = ({ profile, onDownloadCv }: HeroSectionProps) => {
+  const { t } = useLanguage();
+
   return (
     <section id="about" className="py-12 md:py-20 flex flex-col-reverse md:flex-row items-center md:justify-between gap-10 border-b border-line">
       <div className="flex-1 text-center md:text-left">
         <h1 className="text-4xl md:text-6xl font-extrabold text-ink tracking-tight mb-4">
-          Hola, soy <span className="text-accent">{profile.firstName}</span>
+          {t.hero.hello} <span className="text-accent">{profile.firstName}</span>
         </h1>
         <h2 className="text-xl md:text-2xl font-medium text-muted mb-6">
           {profile.title}
@@ -22,11 +25,11 @@ const HeroSection = ({ profile, onDownloadCv }: HeroSectionProps) => {
 
         <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mb-8">
           <button onClick={onDownloadCv} className="flex items-center px-6 py-3 bg-inverse text-on-inverse font-medium rounded-lg hover:bg-inverse-hover transition shadow-sm">
-            <Download className="w-4 h-4 mr-2" /> Descargar CV
+            <Download className="w-4 h-4 mr-2" /> {t.hero.downloadCv}
           </button>
           {profile.email && (
             <a href={`mailto:${profile.email}`} className="flex items-center px-6 py-3 bg-field text-ink-soft font-medium rounded-lg border border-line hover:bg-surface-soft transition shadow-sm">
-              <Mail className="w-4 h-4 mr-2" /> Contáctame
+              <Mail className="w-4 h-4 mr-2" /> {t.hero.contact}
             </a>
           )}
         </div>

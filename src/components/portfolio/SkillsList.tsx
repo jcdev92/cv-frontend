@@ -1,11 +1,13 @@
 import { Star } from 'lucide-react';
 import type { Skill } from '../../types/cv';
+import { useLanguage } from '../../i18n/languageContext';
 
 interface SkillsListProps {
   skills: Skill[];
 }
 
 const SkillsList = ({ skills }: SkillsListProps) => {
+  const { t } = useLanguage();
   if (!skills || skills.length === 0) return null;
 
   // Agrupar habilidades por categoría
@@ -19,7 +21,7 @@ const SkillsList = ({ skills }: SkillsListProps) => {
     <section id="skills">
       <div className="flex items-center mb-8">
         <Star className="w-6 h-6 text-accent mr-3 hidden md:block" />
-        <h3 className="text-2xl font-bold text-ink">Habilidades</h3>
+        <h3 className="text-2xl font-bold text-ink">{t.section.skills}</h3>
       </div>
       <div className="space-y-8">
         {Object.entries(groupedSkills).map(([category, catSkills]) => (

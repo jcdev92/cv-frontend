@@ -1,18 +1,20 @@
 import { Code2, Github, ExternalLink } from 'lucide-react';
 import type { Project } from '../../types/cv';
+import { useLanguage } from '../../i18n/languageContext';
 
 interface ProjectListProps {
   projects: Project[];
 }
 
 const ProjectList = ({ projects }: ProjectListProps) => {
+  const { t } = useLanguage();
   if (!projects || projects.length === 0) return null;
 
   return (
     <section id="projects" className="py-16 border-b border-line">
       <div className="flex items-center mb-10">
         <Code2 className="w-6 h-6 text-accent mr-3" />
-        <h3 className="text-2xl font-bold text-ink">Proyectos Destacados</h3>
+        <h3 className="text-2xl font-bold text-ink">{t.section.projects}</h3>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -40,22 +42,22 @@ const ProjectList = ({ projects }: ProjectListProps) => {
               <div className="flex space-x-4 pt-4 border-t border-line">
                 {proj.repoUrl && (
                   <a href={proj.repoUrl} target="_blank" rel="noreferrer" className="flex items-center text-sm font-medium text-muted hover:text-ink">
-                    <Github className="w-4 h-4 mr-1.5" /> Código
+                    <Github className="w-4 h-4 mr-1.5" /> {t.project.code}
                   </a>
                 )}
                 {proj.frontendRepoUrl && (
                   <a href={proj.frontendRepoUrl} target="_blank" rel="noreferrer" className="flex items-center text-sm font-medium text-muted hover:text-ink">
-                    <Github className="w-4 h-4 mr-1.5" /> Frontend
+                    <Github className="w-4 h-4 mr-1.5" /> {t.project.frontend}
                   </a>
                 )}
                 {proj.backendRepoUrl && (
                   <a href={proj.backendRepoUrl} target="_blank" rel="noreferrer" className="flex items-center text-sm font-medium text-muted hover:text-ink">
-                    <Github className="w-4 h-4 mr-1.5" /> Backend
+                    <Github className="w-4 h-4 mr-1.5" /> {t.project.backend}
                   </a>
                 )}
                 {proj.liveUrl && (
                   <a href={proj.liveUrl} target="_blank" rel="noreferrer" className="flex items-center text-sm font-medium text-accent hover:text-accent">
-                    <ExternalLink className="w-4 h-4 mr-1.5" /> Ver Proyecto
+                    <ExternalLink className="w-4 h-4 mr-1.5" /> {t.project.live}
                   </a>
                 )}
               </div>

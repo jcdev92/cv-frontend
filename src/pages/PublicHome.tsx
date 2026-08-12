@@ -12,7 +12,9 @@ import SkillsList from '../components/portfolio/SkillsList';
 import EducationList from '../components/portfolio/EducationList';
 import PortfolioSkeleton from '../components/portfolio/PortfolioSkeleton';
 import { ThemeToggle } from '../components/ThemeToggle';
-import { LogIn, Sparkles } from 'lucide-react';
+import { LanguageToggle } from '../components/LanguageToggle';
+import { useLanguage } from '../i18n/languageContext';
+import { LogIn, Sparkles, Menu, X } from 'lucide-react';
 import { generateCvPdf } from '../utils/generateCvPdf';
 import { useColdStart } from '../hooks/useColdStart';
 
@@ -31,9 +33,11 @@ const PublicHome = () => {
   const [attempt, setAttempt] = useState(0);
   const [loading, setLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const logout = useAuthStore((state) => state.logout);
+  const { lang, t } = useLanguage();
 
   const showColdStartMessage = useColdStart(loading);
 
@@ -45,7 +49,7 @@ const PublicHome = () => {
   const handleDownloadCv = () => {
     const { profile } = data;
     if (!profile) return;
-    generateCvPdf({ profile, experiences: data.experiences, projects: data.projects, skills: data.skills, educations: data.educations });
+    generateCvPdf({ profile, experiences: data.experiences, projects: data.projects, skills: data.skills, educations: data.educations, lang });
   };
 
   const handleRetry = () => {
@@ -146,19 +150,19 @@ const PublicHome = () => {
   if (hasError) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-page p-4 text-center">
-        <h1 className="text-2xl font-bold text-ink mb-3">No pudimos conectar con el servidor</h1>
+        <h1 className="text-2xl font-bold text-ink mb-3">{t.error.title}</h1>
         <p className="text-muted max-w-md mb-6">
-          La API está alojada en un hosting gratuito que se suspende por inactividad y tarda en arrancar de nuevo. Inténtalo de nuevo en unos segundos.
+          {t.error.body}
         </p>
         <div className="flex flex-wrap justify-center gap-4">
           <button
             onClick={handleRetry}
             className="px-6 py-2 bg-accent text-on-accent rounded-md hover:bg-accent-hover transition"
           >
-            Reintentar
+            {t.error.retry}
           </button>
           <a href="/login" onClick={handleAdminLogin} className="px-6 py-2 bg-surface-soft text-ink-soft rounded-md hover:bg-line transition">
-            Ir al Panel de Administración
+            {t.error.adminPanel}
           </a>
         </div>
       </div>
@@ -170,10 +174,10 @@ const PublicHome = () => {
   if (!profile) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-page p-4 text-center">
-        <h1 className="text-3xl font-bold text-ink mb-4">Perfil no encontrado</h1>
-        <p className="text-muted mb-6">Parece que aún no hay datos en la base de datos.</p>
+        <h1 className="text-3xl font-bold text-ink mb-4">{t.notFound.title}</h1>
+        <p className="text-muted mb-6">{t.notFound.body}</p>
         <a href="/login" onClick={handleAdminLogin} className="px-6 py-2 bg-accent text-on-accent rounded-md hover:bg-accent-hover transition">
-          Ir al Panel de Administración
+          {t.notFound.adminPanel}
         </a>
       </div>
     );
@@ -189,16 +193,17 @@ const PublicHome = () => {
             {profile.firstName} {profile.lastName}
           </span>
           <div className="hidden md:flex space-x-8 text-sm font-medium text-muted">
-            <a href="#about" className="hover:text-accent transition">Sobre mí</a>
-            {experiences.length > 0 && <a href="#experience" className="hover:text-accent transition">Experiencia</a>}
-            {projects.length > 0 && <a href="#projects" className="hover:text-accent transition">Proyectos</a>}
+            <a href="#about" className="hover:text-accent transition">{t.nav.about}</a>
+            {experiences.length > 0 && <a href="#experience" className="hover:text-accent transition">{t.nav.experience}</a>}
+            {projects.length > 0 && <a href="#projects" className="hover:text-accent transition">{t.nav.projects}</a>}
           </div>
           <div className="flex items-center gap-1 sm:gap-2">
+            <LanguageToggle />
             <a
               href="/login"
               onClick={handleAdminLogin}
-              title="Admin Login"
-              aria-label="Ir a Admin Login"
+              title={t.nav.adminLogin}
+              aria-label={t.nav.adminLogin}
               className="p-2 rounded-md text-accent hover:bg-accent-soft transition"
             >
               <LogIn className="h-5 w-5" />
@@ -207,16 +212,55 @@ const PublicHome = () => {
               <a
                 href={showingDemo ? `/?user=${import.meta.env.VITE_PORTFOLIO_USER_EMAIL || ''}` : `/?user=${demoEmail}`}
                 onClick={handleTogglePortfolio}
-                title={showingDemo ? 'Ver CV principal' : 'Ver Demo'}
-                aria-label={showingDemo ? 'Ver CV principal' : 'Ver Demo'}
+                title={showingDemo ? t.nav.viewMain : t.nav.viewDemo}
+                aria-label={showingDemo ? t.nav.viewMain : t.nav.viewDemo}
                 className="p-2 rounded-md text-success hover:bg-success-soft transition"
               >
                 <Sparkles className="h-5 w-5" />
               </a>
             )}
             <ThemeToggle />
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen((o) => !o)}
+              aria-label={mobileMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
+              className="p-2 rounded-md text-muted hover:text-accent hover:bg-accent-soft transition md:hidden"
+            >
+              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
           </div>
         </div>
+
+        {/* Menú móvil */}
+        {mobileMenuOpen && (
+          <div className="md:hidden border-t border-line bg-surface/95 backdrop-blur-md">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col space-y-1">
+              <a href="#about" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2.5 rounded-md text-sm font-medium text-ink-soft hover:bg-accent-soft hover:text-accent transition">
+                {t.nav.about}
+              </a>
+              {experiences.length > 0 && (
+                <a href="#experience" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2.5 rounded-md text-sm font-medium text-ink-soft hover:bg-accent-soft hover:text-accent transition">
+                  {t.nav.experience}
+                </a>
+              )}
+              {projects.length > 0 && (
+                <a href="#projects" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2.5 rounded-md text-sm font-medium text-ink-soft hover:bg-accent-soft hover:text-accent transition">
+                  {t.nav.projects}
+                </a>
+              )}
+              {skills.length > 0 && (
+                <a href="#skills" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2.5 rounded-md text-sm font-medium text-ink-soft hover:bg-accent-soft hover:text-accent transition">
+                  {t.nav.skills}
+                </a>
+              )}
+              {educations.length > 0 && (
+                <a href="#education" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2.5 rounded-md text-sm font-medium text-ink-soft hover:bg-accent-soft hover:text-accent transition">
+                  {t.nav.education}
+                </a>
+              )}
+            </div>
+          </div>
+        )}
       </nav>
 
       <main className="pt-24 pb-20">
@@ -238,8 +282,8 @@ const PublicHome = () => {
       {/* FOOTER */}
       <footer className="bg-surface border-t border-line py-8">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-muted">
-          <p>© {new Date().getFullYear()} {profile.firstName} {profile.lastName}. Todos los derechos reservados.</p>
-          <p className="mt-2 text-xs">Desarrollado con React, Node.js & MongoDB.</p>
+          <p>© {new Date().getFullYear()} {profile.firstName} {profile.lastName}. {t.footer.rights}</p>
+          <p className="mt-2 text-xs">{t.footer.built}</p>
         </div>
       </footer>
     </div>

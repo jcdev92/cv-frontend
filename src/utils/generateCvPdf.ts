@@ -1,4 +1,5 @@
 import type { Profile, Education, Experience, Project, Skill } from '../types/cv';
+import { translations, type Lang } from '../i18n/translations';
 
 interface CvData {
   profile: Profile;
@@ -6,16 +7,20 @@ interface CvData {
   educations: Education[];
   skills: Skill[];
   projects: Project[];
+  lang?: Lang;
 }
 
-const formatDateRange = (startDate: string, endDate: string | undefined, isCurrent: boolean): string => {
-  const start = new Date(startDate).toLocaleDateString('es-ES', { year: 'numeric', month: 'short' });
-  if (isCurrent || !endDate) return `${start} — Presente`;
-  const end = new Date(endDate).toLocaleDateString('es-ES', { year: 'numeric', month: 'short' });
+const formatDateRange = (startDate: string, endDate: string | undefined, isCurrent: boolean, lang: Lang, present: string): string => {
+  const locale = lang === 'es' ? 'es-ES' : 'en-US';
+  const start = new Date(startDate).toLocaleDateString(locale, { year: 'numeric', month: 'short' });
+  if (isCurrent || !endDate) return `${start} — ${present}`;
+  const end = new Date(endDate).toLocaleDateString(locale, { year: 'numeric', month: 'short' });
   return `${start} — ${end}`;
 };
 
-export const generateCvPdf = ({ profile, experiences, educations, skills, projects }: CvData): void => {
+export const generateCvPdf = ({ profile, experiences, educations, skills, projects, lang = 'es' }: CvData): void => {
+  const t = translations[lang];
+  const locale = lang === 'es' ? 'es-ES' : 'en-US';
   const sortedExperience = [...experiences].sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime());
   const sortedEducation = [...educations].sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime());
 
@@ -32,7 +37,7 @@ export const generateCvPdf = ({ profile, experiences, educations, skills, projec
           <div class="cv-item-title">${exp.jobTitle}</div>
           <div class="cv-item-sub">${exp.company}${exp.location ? ', ' + exp.location : ''}</div>
         </div>
-        <div class="cv-dates">${formatDateRange(exp.startDate, exp.endDate, exp.isCurrent)}</div>
+        <div className="cv-dates">${formatDateRange(exp.startDate, exp.endDate, exp.isCurrent, lang, t.pdf.present)}</div>
       </div>
       <p class="cv-item-meta mt-1">${exp.description}</p>
       ${exp.highlights && exp.highlights.length > 0 ? `
@@ -40,7 +45,7 @@ export const generateCvPdf = ({ profile, experiences, educations, skills, projec
           ${exp.highlights.map((h) => `<li>${h}</li>`).join('')}
         </ul>
       ` : ''}
-      ${exp.technologies && exp.technologies.length > 0 ? `<div class="cv-tech">Tecnologías: ${exp.technologies.join(', ')}</div>` : ''}
+      ${exp.technologies && exp.technologies.length > 0 ? `<div class="cv-tech">${t.pdf.technologies}: ${exp.technologies.join(', ')}</div>` : ''}
     </div>
   `).join('');
 
@@ -51,7 +56,7 @@ export const generateCvPdf = ({ profile, experiences, educations, skills, projec
           <div class="cv-item-title">${edu.degree}</div>
           <div class="cv-item-sub">${edu.institution}${edu.location ? ', ' + edu.location : ''}</div>
         </div>
-        <div class="cv-dates">${formatDateRange(edu.startDate, edu.endDate, edu.isCurrent)}</div>
+        <div class="cv-dates">${formatDateRange(edu.startDate, edu.endDate, edu.isCurrent, lang, t.pdf.present)}</div>
       </div>
       ${edu.description ? `<p class="cv-item-meta mt-1">${edu.description}</p>` : ''}
     </div>
@@ -76,7 +81,7 @@ export const generateCvPdf = ({ profile, experiences, educations, skills, projec
           ${proj.highlights.map((h) => `<li>${h}</li>`).join('')}
         </ul>
       ` : ''}
-      ${proj.technologies && proj.technologies.length > 0 ? `<div class="cv-tech">Tecnologías: ${proj.technologies.join(', ')}</div>` : ''}
+      ${proj.technologies && proj.technologies.length > 0 ? `<div class="cv-tech">${t.pdf.technologies}: ${proj.technologies.join(', ')}</div>` : ''}
     </div>
   `).join('');
 
@@ -92,9 +97,9 @@ export const generateCvPdf = ({ profile, experiences, educations, skills, projec
 
   printWindow.document.write(`
     <!DOCTYPE html>
-    <html lang="es">
+    <html lang="${lang}">
     <head>
-      <title>Currículum Vitae - ${profile.firstName} ${profile.lastName}</title>
+      <title>${t.pdf.title} - ${profile.firstName} ${profile.lastName}</title>
       <style>
         @page { margin: 1.5cm; size: A4; }
         body { font-family: 'Calibri', 'Arial', sans-serif; margin: 0; padding: 0; color: #000; line-height: 1.4; font-size: 11pt; }
@@ -127,18 +132,18 @@ export const generateCvPdf = ({ profile, experiences, educations, skills, projec
 
         ${profile.summary ? `
           <div class="cv-section">
-            <h3>Perfil Profesional</h3>
+            <h3>${t.pdf.profile}</h3>
             <p class="cv-item-meta">${profile.summary}</p>
           </div>
         ` : ''}
 
-        ${experienceSection ? `<div class="cv-section"><h3>Experiencia Laboral</h3>${experienceSection}</div>` : ''}
-        ${educationSection ? `<div class="cv-section"><h3>Educación</h3>${educationSection}</div>` : ''}
-        ${skillsSection ? `<div class="cv-section"><h3>Habilidades</h3>${skillsSection}</div>` : ''}
-        ${projectsSection ? `<div class="cv-section"><h3>Proyectos</h3>${projectsSection}</div>` : ''}
+        ${experienceSection ? `<div class="cv-section"><h3>${t.pdf.workExperience}</h3>${experienceSection}</div>` : ''}
+        ${educationSection ? `<div class="cv-section"><h3>${t.pdf.education}</h3>${educationSection}</div>` : ''}
+        ${skillsSection ? `<div class="cv-section"><h3>${t.pdf.skills}</h3>${skillsSection}</div>` : ''}
+        ${projectsSection ? `<div class="cv-section"><h3>${t.pdf.projects}</h3>${projectsSection}</div>` : ''}
 
         <div class="footer">
-          Currículum generado el ${new Date().toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })}. Referencias disponibles a solicitud.
+          ${t.pdf.footer} ${new Date().toLocaleDateString(locale, { year: 'numeric', month: 'long', day: 'numeric' })}. ${lang === 'es' ? 'Referencias disponibles a solicitud.' : 'References available upon request.'}
         </div>
       </div>
     </body>
